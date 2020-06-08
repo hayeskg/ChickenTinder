@@ -25,7 +25,7 @@ type Restaurant{
 input EventInput{
   eventName: String!
   eventLocation: String!
-  members: ID!
+  members: [ID!]!
 }
 
 input UserInput{
@@ -35,8 +35,8 @@ input UserInput{
 }
 
 type RootQuery{
-  events: [Event!]!
-  users: [Users!]!
+  getEvents: [Event!]!
+  getUsers: [User!]!
 }
 
 type RootMutation{

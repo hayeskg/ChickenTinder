@@ -1,10 +1,20 @@
 const express = require('express');
 const mongoose = require('mongoose');
+const graphQlHttp = require('express-graphql');//middleware
+
+const graphQlSchema = require('./graphql/schema/index');
+const graphQlResolvers = require('./graphql/resolvers/index');
 
 
 const app = express();
 
 app.use(express.json())
+
+app.use('/graphql', graphQlHttp({
+  schema: graphQlSchema,
+  rootValue: graphQlResolvers,
+  graphiql: true
+}))
 
 app.use('/', (req, res, send) => {
   res.send('Chicken Tinder')

@@ -7,6 +7,10 @@ const eventSchema = new Schema({
     type: String,
     required: true,
   },
+  eventLocation: {
+    type: String,
+    required: true
+  },
   members: [
     {
       type: Schema.Types.ObjectId,
