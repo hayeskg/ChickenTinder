@@ -2,9 +2,25 @@ const Event = require('../../models/event');
 const User = require('../../models/user');
 const Restaurant = require('../../models/restaurant');
 
-// const options = {
-//   headers: process.env.headers,
-// };
+const axios = require('axios');
+
+
+//TripAdvisor API request options.
+const options = {
+  headers: {
+    "X-RapidAPI-Host": "tripadvisor1.p.rapidapi.com",
+    "X-RapidAPI-Key": "6b17fe9061msh5a7cdb140636ba6p153973jsnecdfa2f4a02a"
+  },
+  params: {
+    "restaurant_tagcategory_standalone": "10591",
+    "lunit": "km",
+    "restaurant_tagcategory": "10591",
+    "limit": "20",
+    "currency": "GBP",
+    "lang": "en_US",
+    "location_id": "11687380"
+  }
+};
 
 module.exports = {
   getEvents: () => {
@@ -111,20 +127,24 @@ module.exports = {
         return { ...restaurant._doc, _id: restaurant.id }
       })
   },
-  // createRestaurantsTripAdvisor: () => {
-  //   return axios
-  //     .get(
-  //       'https://tripadvisor1.p.rapidapi.com/restaurants/list?restaurant_tagcategory_standalone=10591&lunit=km&restaurant_tagcategory=10591&limit=30&currency=USD&lang=en_US&location_id=293919',
-  //       options
-  //     )
-  //     .then((res) => res.data.data);
-  // }
-
-  // updateVote: () => {
-  //   //from front end we get an array of object (with Restaurant ID, votes)
-  //   //map through the event restaurants data and update based on IDs/votes
-
-
+  getRestaurantsTripAdvisor: () => {
+    return axios
+      .get(
+        "https://tripadvisor1.p.rapidapi.com/restaurants/list",
+        options,
+      )
+      .then((res) => {
+        let restList = [...res.data.data]
+        return restList.map(restaurant => {
+          return {
+            location_id: restaurant.location_id,
+            location_string: restaurant.location_string,
+            name: restaurant.name,
+            description: restaurant.description
+          }
+        })
+      });
+  }
 }
 
 
