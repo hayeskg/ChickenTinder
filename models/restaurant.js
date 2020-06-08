@@ -15,7 +15,11 @@ const restaurantSchema = new Schema({
     type: String,
     required: true,
   },
-  venueVotes: {
+  positiveVotes: {
+    type: Number,
+    required: true,
+  },
+  negativeVotes: {
     type: Number,
     required: true,
   }

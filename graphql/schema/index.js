@@ -20,6 +20,8 @@ type Restaurant{
   venueName: String!
   venueImage: String!
   venueCity: String!
+  positiveVotes: Int!
+  negativeVotes: Int!
 }
 
 input EventInput{
@@ -34,20 +36,29 @@ input UserInput{
   city: String!
 }
 
+input RestaurantInput{
+  venueName: String!
+  venueImage: String!
+  venueCity: String!
+  positiveVotes: Int!
+  negativeVotes: Int!
+}
+
 type RootQuery{
   getEvents: [Event!]!
   getUsers: [User!]!
+  getRestaurant: Restaurant
 }
 
 type RootMutation{
   createEvent(eventInput: EventInput): Event
   createUser(userInput: UserInput): User
+  createRestaurant(restaurantInput: RestaurantInput): Restaurant
 }
 
 schema{
   query: RootQuery
   mutation: RootMutation
 }
-
 
 `)
