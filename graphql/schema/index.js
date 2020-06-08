@@ -47,7 +47,8 @@ input RestaurantInput{
 type RootQuery{
   getEvents: [Event!]!
   getUsers: [User!]!
-  getRestaurant: Restaurant
+  getRestaurant(restaurantID: ID!): Restaurant
+  getRestaurants: [Restaurant!]!
 }
 
 type RootMutation{
