@@ -2,6 +2,10 @@ const Event = require('../../models/event');
 const User = require('../../models/user');
 const Restaurant = require('../../models/restaurant');
 
+// const options = {
+//   headers: process.env.headers,
+// };
+
 module.exports = {
   getEvents: () => {
     return Event.find()
@@ -49,7 +53,6 @@ module.exports = {
         })
       })
   },
-
   createUser: (args) => {
     const user = new User({
       email: args.userInput.email,
@@ -107,7 +110,16 @@ module.exports = {
       .then((restaurant) => {
         return { ...restaurant._doc, _id: restaurant.id }
       })
-  }
+  },
+  // createRestaurantsTripAdvisor: () => {
+  //   return axios
+  //     .get(
+  //       'https://tripadvisor1.p.rapidapi.com/restaurants/list?restaurant_tagcategory_standalone=10591&lunit=km&restaurant_tagcategory=10591&limit=30&currency=USD&lang=en_US&location_id=293919',
+  //       options
+  //     )
+  //     .then((res) => res.data.data);
+  // }
+
   // updateVote: () => {
   //   //from front end we get an array of object (with Restaurant ID, votes)
   //   //map through the event restaurants data and update based on IDs/votes

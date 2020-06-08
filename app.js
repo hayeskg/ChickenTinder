@@ -2,6 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const graphQlHttp = require('express-graphql');//middleware
 
+
 const graphQlSchema = require('./graphql/schema/index');
 const graphQlResolvers = require('./graphql/resolvers/index');
 
@@ -28,4 +29,3 @@ mongoose.connect(`mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PA
   .catch(err => {
     console.log(err);
   })
-
