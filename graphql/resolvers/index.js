@@ -1,6 +1,7 @@
 const Event = require('../../models/event');
 const User = require('../../models/user');
 const Restaurant = require('../../models/restaurant');
+const RestaurantTA = require('../../models/restaurantTA');
 
 const axios = require('axios');
 
@@ -151,7 +152,7 @@ module.exports = {
               return dietObj.name;
             })
           }
-          return {
+          const restaurantTA = {
             location_id: restaurant.location_id,
             location_string: restaurant.location_string,
             name: restaurant.name,
@@ -166,9 +167,33 @@ module.exports = {
             address: restaurant.address,
             dietary_restrictions: dietArr
           }
+          //this.createRestaurantTA(restaurantTA);
+          return restaurantTA;
 
         })
       });
+  },
+  createRestaurantTA: (args) => {
+    const { location_id, location_string, name, description, cuisine, photo, price, ranking, rating, phone, website, address, dietary_restrictions } = args.restaurantTAInput;
+    const restaurantTA = new RestaurantTA({
+      location_id: location_id,
+      location_string: location_string,
+      name: name,
+      description: description,
+      cuisine: [...cuisine],
+      photo: photo,
+      price: price,
+      ranking: ranking,
+      rating: rating,
+      phone: phone,
+      website: website,
+      address: address,
+      dietary_restrictions: [...dietary_restrictions]
+    })
+    return restaurantTA.save()
+      .then((restaurantTA) => {
+        return { ...restaurantTA._doc, _id: restaurantTA._id }
+      })
   }
 }
 

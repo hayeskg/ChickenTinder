@@ -1,5 +1,7 @@
 const { buildSchema, GraphQLObjectType, GraphQLString, GraphQLList, GraphQLSchema } = require('graphql');
 
+
+
 module.exports = buildSchema(`
 type Event {
   _id: ID!
@@ -48,7 +50,23 @@ type RestaurantList{
 
 
 input RestaurantListInput{
-  list: String
+  list: [ID]
+}
+
+input RestaurantTAInput{
+  location_id: String
+  location_string: String
+  name: String
+  description: String
+  cuisine: [String]
+  photo: String
+  price: String
+  ranking: String
+  rating: String
+  phone: String
+  website: String
+  address: String
+  dietary_restrictions: [String]
 }
 
 input EventInput{
@@ -84,6 +102,7 @@ type RootMutation{
   createEvent(eventInput: EventInput): Event
   createUser(userInput: UserInput): User
   createRestaurant(restaurantInput: RestaurantInput): Restaurant
+  createRestaurantTA(restaurantTAInput: RestaurantTAInput): RestaurantTA
   createRestaurantList(restaurantListInput: RestaurantListInput): RestaurantList
 }
 
@@ -93,3 +112,12 @@ schema{
 }
 
 `)
+
+// var GeoPoint = new GraphQLInputObjectType({
+//   name: 'GeoPoint',
+//   fields: {
+//     lat: { type: new GraphQLNonNull(GraphQLFloat) },
+//     lon: { type: new GraphQLNonNull(GraphQLFloat) },
+//     alt: { type: GraphQLFloat, defaultValue: 0 },
+//   }
+// });
