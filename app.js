@@ -1,5 +1,6 @@
 const express = require('express');
 const mongoose = require('mongoose');
+const dotenv = require('dotenv').config();
 const graphQlHttp = require('express-graphql');//middleware
 // const bodyParser = require('body-parser');
 // const { ApolloServer, gql } = require('apollo-server-express');

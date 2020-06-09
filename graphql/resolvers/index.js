@@ -8,8 +8,8 @@ const axios = require('axios');
 //TripAdvisor API request options.
 const options = {
   headers: {
-    "X-RapidAPI-Host": "tripadvisor1.p.rapidapi.com",
-    "X-RapidAPI-Key": "6b17fe9061msh5a7cdb140636ba6p153973jsnecdfa2f4a02a"
+    "X-RapidAPI-Host": process.env.TA_HOST,
+    "X-RapidAPI-Key": process.env.TA_KEY
   },
   params: {
     "restaurant_tagcategory_standalone": "10591",

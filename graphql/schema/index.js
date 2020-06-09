@@ -39,7 +39,16 @@ type RestaurantTA{
   website: String
   address: String
   dietary_restrictions: [String]
-  
+}
+
+type RestaurantList{
+  _id: ID
+  list: [RestaurantTA]
+}
+
+
+input RestaurantListInput{
+  list: String
 }
 
 input EventInput{
@@ -68,12 +77,14 @@ type RootQuery{
   getRestaurant(restaurantID: ID!): Restaurant
   getRestaurants: [Restaurant!]!
   getRestaurantsTripAdvisor: [RestaurantTA]
+  getRestaurantList(listID: ID!): RestaurantList
 }
 
 type RootMutation{
   createEvent(eventInput: EventInput): Event
   createUser(userInput: UserInput): User
   createRestaurant(restaurantInput: RestaurantInput): Restaurant
+  createRestaurantList(restaurantListInput: RestaurantListInput): RestaurantList
 }
 
 schema{
