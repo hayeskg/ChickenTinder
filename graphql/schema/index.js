@@ -92,6 +92,7 @@ type RootQuery{
   getRestaurant(restaurantID: ID!): Restaurant
   getRestaurants: [Restaurant!]!
   getRestaurantsTripAdvisor: [RestaurantTA]
+  getRestaurantTA(restaurantID: ID!): RestaurantTA
   getRestaurantList(listID: ID!): RestaurantList
 }
 

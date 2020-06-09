@@ -24,6 +24,7 @@ const options = {
 };
 
 module.exports = {
+  //Queries
   getEvents: () => {
     return Event.find()
       .then(events => {
@@ -70,6 +71,71 @@ module.exports = {
         })
       })
   },
+  getRestaurantsTripAdvisor: () => {
+    return axios
+      .get(
+        "https://tripadvisor1.p.rapidapi.com/restaurants/list",
+        options,
+      )
+      .then((res) => {
+        let restList = [...res.data.data]
+        return restList.map(restaurant => {
+          let photoUrl = '';
+          let cuisineArr = [];
+          let dietArr = [];
+          if (restaurant.cuisine) {
+            cuisineArr = restaurant.cuisine.map(cuisineObj => {
+              return cuisineObj.name;
+            })
+          }
+          if (restaurant.photo) {
+            photoUrl = restaurant.photo.images.original.url;
+          }
+          if (restaurant.dietary_restrictions) {
+            dietArr = restaurant.dietary_restrictions.map(dietObj => {
+              return dietObj.name;
+            })
+          }
+          const restaurantTA = {
+            location_id: restaurant.location_id,
+            location_string: restaurant.location_string,
+            name: restaurant.name,
+            description: restaurant.description,
+            cuisine: cuisineArr,
+            photo: photoUrl,
+            price: restaurant.price,
+            ranking: restaurant.ranking,
+            rating: restaurant.rating,
+            phone: restaurant.phone,
+            website: restaurant.website,
+            address: restaurant.address,
+            dietary_restrictions: dietArr
+          }
+          //this.createRestaurantTA(restaurantTA);
+          return restaurantTA;
+
+        })
+      });
+  },
+  getRestaurantTA: (args) => {
+    return RestaurantTA.findById(args.restaurantID)
+      .then(restaurant => {
+        return {
+          ...restaurant._doc,
+          _id: restaurant._id
+        }
+      })
+  },
+  getRestaurantList: (args) => {
+    return RestaurantTAList.findById(args.listID)
+      .then(restaurantList => {
+        return {
+          ...restaurantList._doc,
+          _id: restaurantList._id
+        }
+      })
+  },
+  ///Mutations
   createUser: (args) => {
     const user = new User({
       email: args.userInput.email,
@@ -128,52 +194,7 @@ module.exports = {
         return { ...restaurant._doc, _id: restaurant.id }
       })
   },
-  getRestaurantsTripAdvisor: () => {
-    return axios
-      .get(
-        "https://tripadvisor1.p.rapidapi.com/restaurants/list",
-        options,
-      )
-      .then((res) => {
-        let restList = [...res.data.data]
-        return restList.map(restaurant => {
-          let photoUrl = '';
-          let cuisineArr = [];
-          let dietArr = [];
-          if (restaurant.cuisine) {
-            cuisineArr = restaurant.cuisine.map(cuisineObj => {
-              return cuisineObj.name;
-            })
-          }
-          if (restaurant.photo) {
-            photoUrl = restaurant.photo.images.original.url;
-          }
-          if (restaurant.dietary_restrictions) {
-            dietArr = restaurant.dietary_restrictions.map(dietObj => {
-              return dietObj.name;
-            })
-          }
-          const restaurantTA = {
-            location_id: restaurant.location_id,
-            location_string: restaurant.location_string,
-            name: restaurant.name,
-            description: restaurant.description,
-            cuisine: cuisineArr,
-            photo: photoUrl,
-            price: restaurant.price,
-            ranking: restaurant.ranking,
-            rating: restaurant.rating,
-            phone: restaurant.phone,
-            website: restaurant.website,
-            address: restaurant.address,
-            dietary_restrictions: dietArr
-          }
-          //this.createRestaurantTA(restaurantTA);
-          return restaurantTA;
 
-        })
-      });
-  },
   createRestaurantTA: (args) => {
     const { location_id, location_string, name, description, cuisine, photo, price, ranking, rating, phone, website, address, dietary_restrictions } = args.restaurantTAInput;
     const restaurantTA = new RestaurantTA({
