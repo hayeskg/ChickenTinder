@@ -23,12 +23,11 @@ app.use('/', (req, res, send) => {
 })
 
 
+app.listen(process.env.PORT || 3000, () => {
+  console.log(`App is live on Port ${process.env.PORT}`)
+})
+
 mongoose.connect(`mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASSWORD}@cluster0-1akcv.gcp.mongodb.net/${process.env.MONGO_DB}?retryWrites=true&w=majority`)
-  .then(() => {
-    app.listen(process.env.PORT || 3000, () => {
-      console.log(`App is live on Port ${process.env.PORT}`)
-    });
-  })
   .catch(err => {
     console.log(err);
   })
