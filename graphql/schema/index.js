@@ -110,11 +110,3 @@ schema{
 
 `)
 
-// var GeoPoint = new GraphQLInputObjectType({
-//   name: 'GeoPoint',
-//   fields: {
-//     lat: { type: new GraphQLNonNull(GraphQLFloat) },
-//     lon: { type: new GraphQLNonNull(GraphQLFloat) },
-//     alt: { type: GraphQLFloat, defaultValue: 0 },
-//   }
-// });

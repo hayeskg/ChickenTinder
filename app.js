@@ -27,7 +27,7 @@ app.listen(process.env.PORT || 3000, () => {
   console.log(`App is live on Port ${process.env.PORT}`)
 })
 
-mongoose.connect(`mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASSWORD}@cluster0-1akcv.gcp.mongodb.net/${process.env.MONGO_DB}?retryWrites=true&w=majority`)
+mongoose.connect(process.env.MONGODB_URI)
   .catch(err => {
     console.log(err);
   })
