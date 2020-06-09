@@ -1,7 +1,5 @@
 const { buildSchema, GraphQLObjectType, GraphQLString, GraphQLList, GraphQLSchema } = require('graphql');
 
-
-
 module.exports = buildSchema(`
 type Event {
   _id: ID!
@@ -45,11 +43,6 @@ type RestaurantTA{
 
 type RestaurantList{
   _id: ID
-  list: [RestaurantTA]
-}
-
-
-input RestaurantListInput{
   list: [ID]
 }
 
@@ -87,6 +80,10 @@ input RestaurantInput{
   venueCity: String!
   positiveVotes: Int!
   negativeVotes: Int!
+}
+
+input RestaurantListInput{
+  list: [ID]
 }
 
 type RootQuery{

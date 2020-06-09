@@ -19,7 +19,7 @@ const restaurantTASchema = new Schema({
     type: String,
     required: false
   },
-  cusisine: {
+  cuisine: {
     type: [String],
     required: false
   },

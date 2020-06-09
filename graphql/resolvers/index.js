@@ -2,6 +2,7 @@ const Event = require('../../models/event');
 const User = require('../../models/user');
 const Restaurant = require('../../models/restaurant');
 const RestaurantTA = require('../../models/restaurantTA');
+const RestaurantTAList = require('../../models/restaruantTAList');
 
 const axios = require('axios');
 
@@ -193,6 +194,15 @@ module.exports = {
     return restaurantTA.save()
       .then((restaurantTA) => {
         return { ...restaurantTA._doc, _id: restaurantTA._id }
+      })
+  },
+  createRestaurantList: (args) => {
+    const newList = new RestaurantTAList({
+      list: [...args.restaurantListInput.list]
+    })
+    return newList.save()
+      .then((list) => {
+        return { ...list._doc, _id: list._id }
       })
   }
 }
