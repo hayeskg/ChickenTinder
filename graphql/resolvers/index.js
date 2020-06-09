@@ -13,12 +13,11 @@ const options = {
   },
   params: {
     "restaurant_tagcategory_standalone": "10591",
-    "lunit": "km",
-    "restaurant_tagcategory": "10591",
-    "limit": "20",
+    "lunit": "mi",
+    "limit": "10",
     "currency": "GBP",
-    "lang": "en_US",
-    "location_id": "11687380"
+    "lang": "en_GB",
+    "location_id": "186411"
   }
 };
 
@@ -136,12 +135,38 @@ module.exports = {
       .then((res) => {
         let restList = [...res.data.data]
         return restList.map(restaurant => {
+          let photoUrl = '';
+          let cuisineArr = [];
+          let dietArr = [];
+          if (restaurant.cuisine) {
+            cuisineArr = restaurant.cuisine.map(cuisineObj => {
+              return cuisineObj.name;
+            })
+          }
+          if (restaurant.photo) {
+            photoUrl = restaurant.photo.images.original.url;
+          }
+          if (restaurant.dietary_restrictions) {
+            dietArr = restaurant.dietary_restrictions.map(dietObj => {
+              return dietObj.name;
+            })
+          }
           return {
             location_id: restaurant.location_id,
             location_string: restaurant.location_string,
             name: restaurant.name,
-            description: restaurant.description
+            description: restaurant.description,
+            cuisine: cuisineArr,
+            photo: photoUrl,
+            price: restaurant.price,
+            ranking: restaurant.ranking,
+            rating: restaurant.rating,
+            phone: restaurant.phone,
+            website: restaurant.website,
+            address: restaurant.address,
+            dietary_restrictions: dietArr
           }
+
         })
       });
   }

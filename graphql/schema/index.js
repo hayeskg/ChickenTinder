@@ -25,11 +25,21 @@ type Restaurant{
 }
 
 type RestaurantTA{
-  _id: ID!
-  location_id: String!
-  location_string: String!
-  name: String!
-  description: String!
+  _id: ID
+  location_id: String
+  location_string: String
+  name: String
+  description: String
+  cuisine: [String]
+  photo: String
+  price: String
+  ranking: String
+  rating: String
+  phone: String
+  website: String
+  address: String
+  dietary_restrictions: [String]
+  
 }
 
 input EventInput{
