@@ -79,7 +79,7 @@ const getRestaurants = () => {
 const getRestaurantsTripAdvisor = () => {
   return axios
     .get(
-      "https://tripadvisor1.p.rapidapi.com/restaurants/list",
+      "https://tripadvisor1.p.rapidapi.com/restaurants/list-by-latlng",
       queryOptions,
     )
     .then((res) => {
