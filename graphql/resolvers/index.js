@@ -7,22 +7,7 @@ const RestaurantTA = require('../../models/restaurantTA');
 const RestaurantTAList = require('../../models/restaruantTAList');
 
 
-//TripAdvisor API request options.
-const queryOptions = {
-  headers: {
-    "X-RapidAPI-Host": process.env.TA_HOST,
-    "X-RapidAPI-Key": process.env.TA_KEY
-  },
-  params: {
-    "limit": "10",
-    "currency": "GBP",
-    "distance": "2",
-    "lunit": "mi",
-    "lang": "en_GB",
-    "latitude": "53.3211436",
-    "longitude": "-1.925856"
-  }
-};
+
 
 
 //Queries
@@ -76,7 +61,28 @@ const getRestaurants = () => {
     })
 }
 
-const getRestaurantsTripAdvisor = () => {
+const getRestaurantsTripAdvisor = (args) => {
+  //TripAdvisor API request options.
+  const queryOptions = {
+    headers: {
+      "X-RapidAPI-Host": process.env.TA_HOST,
+      "X-RapidAPI-Key": process.env.TA_KEY
+    },
+    params: {
+      "limit": "30",
+      "currency": "GBP",
+      "distance": args.tripAdvisorInput.distance,
+      "lunit": "mi",
+      "lang": "en_GB",
+      "latitude": args.tripAdvisorInput.latitude,
+      "longitude": args.tripAdvisorInput.longitude
+    }
+
+    //"53.3211436"
+    //"-1.925856"
+  };
+
+
   return axios
     .get(
       "https://tripadvisor1.p.rapidapi.com/restaurants/list-by-latlng",
@@ -114,7 +120,8 @@ const getRestaurantsTripAdvisor = () => {
           phone: restaurant.phone,
           website: restaurant.website,
           address: restaurant.address,
-          dietary_restrictions: dietArr
+          dietary_restrictions: dietArr,
+          num_reviews: restaurant.num_reviews
         }
         //this.createRestaurantTA(restaurantTA);
         return restaurantTA;

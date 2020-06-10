@@ -39,6 +39,7 @@ type RestaurantTA{
   website: String
   address: String
   dietary_restrictions: [String]
+  num_reviews: String
 }
 
 type RestaurantList{
@@ -86,12 +87,18 @@ input RestaurantListInput{
   list: [ID]
 }
 
+input TripAdvisorInput {
+  distance: String
+  latitude: String!
+  longitude: String!
+}
+
 type RootQuery{
   getEvents: [Event!]!
   getUsers: [User!]!
   getRestaurant(restaurantID: ID!): Restaurant
   getRestaurants: [Restaurant!]!
-  getRestaurantsTripAdvisor: [RestaurantTA]
+  getRestaurantsTripAdvisor(tripAdvisorInput: TripAdvisorInput ): [RestaurantTA]
   getRestaurantTA(restaurantID: ID!): RestaurantTA
   getRestaurantList(listID: ID!): RestaurantList
 }
