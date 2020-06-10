@@ -168,7 +168,7 @@ const createEvent = (args) => {
   const {
     eventName,
     eventDate,
-    eventVotingClosingDate,
+    eventClosingDate,
     eventLat,
     eventLong,
     eventDistance,
@@ -185,45 +185,69 @@ const createEvent = (args) => {
     }
   }
 
-
   return restaurantPool = getRestaurantsTripAdvisor(input)
     .then((list) => {
-      console.log(list);
+      // let arr = []
+      return Promise.all(list.map(restaurant => {
+        const input = {
+          restaurantTAInput: {
+            location_id: restaurant.location_id,
+            location_string: restaurant.location_string,
+            name: restaurant.name,
+            description: restaurant.description,
+            cuisine: [...restaurant.cuisine],
+            photo: restaurant.photo,
+            price: restaurant.price,
+            ranking: restaurant.ranking,
+            rating: restaurant.rating,
+            phone: restaurant.phone,
+            website: restaurant.website,
+            address: restaurant.address,
+            dietary_restrictions: [...restaurant.dietary_restrictions]
+          }
+        }
+        return createRestaurantTA(input)
+          .then((restaurantDB) => {
+            //console.log(restaurantDB)
+            return restaurantDB;
+          })
+      }))
+    })
+    .then(restaurantsDB => {
+      let restaurantIDs = [];
+      restaurantIDs = restaurantsDB.map(restaurantDB => {
+        return restaurantDB._id;
+      })
+      const input = {
+        restaurantListInput: {
+          list: restaurantIDs
+        }
+      }
+      return createRestaurantList(input);
+    })
+    .then(restaurantList => {
+
+      const eventInput = {
+        eventName: eventName,
+        eventDate: eventDate,
+        eventClosingDate: eventClosingDate,
+        eventLat: eventLat,
+        eventLong: eventLong,
+        eventDistance: eventDistance,
+        eventOrganiser: eventOrganiser,
+        attendees: [...attendees],
+        restaurantList: restaurantList._id
+      }
+      const event = new Event(eventInput)
+
+
+      return event.save()
+        .then((event) => {
+          return { ...event._doc, _id: event.id }
+        })
     })
 
 
-  // const event = new Event({
-  //   eventName: args.eventInput.eventName,
-  //   eventLocation: args.eventInput.eventLocation,
-  //   members: [...args.eventInput.members]
-  // });
-  // let createdEvent;
-  // return event
-  //   .save()
-  //   .then(savedEvent => {
-  //     let users = [];
-  //     users = savedEvent.members.map(id => {
-  //       return User.findById(id)
-  //         .then(user => {
-  //           return {
-  //             ...user._doc,
-  //             _id: user.id
-  //           }
-  //         })
-  //     })
-  //     createdEvent = {
-  //       ...savedEvent._doc,
-  //       _id: savedEvent._doc._id.toString(),
-  //       members: [...users]
-  //     }
-  //     console.log(createdEvent)
-  //     return createdEvent;
-  //   })
-  //   .then()
-  //   .catch(err => {
-  //     console.log(err);
-  //     throw err;
-  //   });
 }
 
 const createRestaurant = (args) => {

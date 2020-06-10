@@ -5,30 +5,26 @@ type Event {
   _id: ID!
   eventName: String!
   eventDate: String!
-  eventVotingClosingDate: String!
+  eventClosingDate: String!
   eventLat: String!
   eventLong: String!
-  eventDistance: ID!
-  eventOrganiser: ID!
-  attendees: [ID!]!
+  eventDistance: String!
+  eventOrganiser: String!
+  attendees: [String!]!
   restaurantList: ID!
   votes: [Vote]
-  winner: ID
-  topThree:TopThree
+  winner: String
+  topThree: String
 } 
 
 type Vote{
   _id: ID
 }
 
-type TopThree{
-_id: ID
-}
-
-
 type User {
   _id: ID!
   email: String!
+  password: String!
   firstName: String!
   city: String!
 }
@@ -84,7 +80,7 @@ input RestaurantTAInput{
 input EventInput{
   eventName: String!
   eventDate: String!
-  eventVotingClosingDate: String!
+  eventClosingDate: String!
   eventLat: String!
   eventLong: String!
   eventDistance: String
@@ -94,6 +90,7 @@ input EventInput{
 
 input UserInput{
   email: String!
+  password: String!
   firstName: String!
   city: String!
 }
