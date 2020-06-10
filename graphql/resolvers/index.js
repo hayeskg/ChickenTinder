@@ -185,6 +185,8 @@ const createEvent = (args) => {
     }
   }
 
+  let restaurantsArray = [];
+
   return restaurantPool = getRestaurantsTripAdvisor(input)
     .then((list) => {
       // let arr = []
@@ -215,6 +217,7 @@ const createEvent = (args) => {
     })
     .then(restaurantsDB => {
       let restaurantIDs = [];
+      restaurantsArray = [...restaurantsDB];
       restaurantIDs = restaurantsDB.map(restaurantDB => {
         return restaurantDB._id;
       })
@@ -243,7 +246,8 @@ const createEvent = (args) => {
 
       return event.save()
         .then((event) => {
-          return { ...event._doc, _id: event.id }
+          console.log(restaurantsArray);
+          return { ...event._doc, _id: event.id, restaurants: restaurantsArray }
         })
     })
 

@@ -12,6 +12,7 @@ type Event {
   eventOrganiser: String!
   attendees: [String!]!
   restaurantList: ID!
+  restaurants: [RestaurantTA]
   votes: [Vote]
   winner: String
   topThree: String
