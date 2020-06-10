@@ -164,38 +164,66 @@ const createUser = (args) => {
 }
 
 const createEvent = (args) => {
-  const event = new Event({
-    eventName: args.eventInput.eventName,
-    eventLocation: args.eventInput.eventLocation,
-    members: [...args.eventInput.members]
-  });
-  let createdEvent;
-  return event
-    .save()
-    .then(savedEvent => {
-      let users = [];
-      users = savedEvent.members.map(id => {
-        return User.findById(id)
-          .then(user => {
-            return {
-              ...user._doc,
-              _id: user.id
-            }
-          })
-      })
-      createdEvent = {
-        ...savedEvent._doc,
-        _id: savedEvent._doc._id.toString(),
-        members: [...users]
-      }
-      console.log(createdEvent)
-      return createdEvent;
+  //form input from front end
+  const {
+    eventName,
+    eventDate,
+    eventVotingClosingDate,
+    eventLat,
+    eventLong,
+    eventDistance,
+    eventOrganiser,
+    attendees
+  } = args.eventInput
+
+  //input object for tr
+  const input = {
+    tripAdvisorInput: {
+      distance: eventDistance,
+      latitude: eventLat,
+      longitude: eventLong
+    }
+  }
+
+
+  return restaurantPool = getRestaurantsTripAdvisor(input)
+    .then((list) => {
+      console.log(list);
     })
-    .then()
-    .catch(err => {
-      console.log(err);
-      throw err;
-    });
+
+
+  // const event = new Event({
+  //   eventName: args.eventInput.eventName,
+  //   eventLocation: args.eventInput.eventLocation,
+  //   members: [...args.eventInput.members]
+  // });
+  // let createdEvent;
+  // return event
+  //   .save()
+  //   .then(savedEvent => {
+  //     let users = [];
+  //     users = savedEvent.members.map(id => {
+  //       return User.findById(id)
+  //         .then(user => {
+  //           return {
+  //             ...user._doc,
+  //             _id: user.id
+  //           }
+  //         })
+  //     })
+  //     createdEvent = {
+  //       ...savedEvent._doc,
+  //       _id: savedEvent._doc._id.toString(),
+  //       members: [...users]
+  //     }
+  //     console.log(createdEvent)
+  //     return createdEvent;
+  //   })
+  //   .then()
+  //   .catch(err => {
+  //     console.log(err);
+  //     throw err;
+  //   });
 }
 
 const createRestaurant = (args) => {

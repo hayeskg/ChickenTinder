@@ -4,9 +4,27 @@ module.exports = buildSchema(`
 type Event {
   _id: ID!
   eventName: String!
-  eventLocation: String!
-  members: [User!]!
+  eventDate: String!
+  eventVotingClosingDate: String!
+  eventLat: String!
+  eventLong: String!
+  eventDistance: ID!
+  eventOrganiser: ID!
+  attendees: [ID!]!
+  restaurantList: ID!
+  votes: [Vote]
+  winner: ID
+  topThree:TopThree
+} 
+
+type Vote{
+  _id: ID
 }
+
+type TopThree{
+_id: ID
+}
+
 
 type User {
   _id: ID!
@@ -65,8 +83,13 @@ input RestaurantTAInput{
 
 input EventInput{
   eventName: String!
-  eventLocation: String!
-  members: [ID!]!
+  eventDate: String!
+  eventVotingClosingDate: String!
+  eventLat: String!
+  eventLong: String!
+  eventDistance: String
+  eventOrganiser: String!
+  attendees: [String!]
 }
 
 input UserInput{
