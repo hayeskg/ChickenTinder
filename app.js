@@ -1,5 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
+const app = express();
+const cors = require('cors');
 const dotenv = require('dotenv').config();
 const graphQlHttp = require('express-graphql');//middleware
 // const bodyParser = require('body-parser');
@@ -10,8 +12,8 @@ const graphQlSchema = require('./graphql/schema/index');
 const graphQlResolvers = require('./graphql/resolvers/index');
 
 
-const app = express();
 
+app.use(cors());
 app.use('/graphql', graphQlHttp({
   schema: graphQlSchema,
   rootValue: graphQlResolvers,
