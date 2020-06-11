@@ -13,7 +13,8 @@ type Event {
   attendees: [String!]!
   restaurantList: ID!
   restaurants: [RestaurantTA]
-  votes: [Vote]
+  votesRefs : [ID] 
+  votes: [Vote]   
   winner: String
   topThree: String
 } 
@@ -50,8 +51,8 @@ type RestaurantTA{
   address: String
   dietary_restrictions: [String]
   num_reviews: String
-  positiveVotes: Int
-  negativeVotes: Int
+  positiveVotes: Int!
+  negativeVotes: Int!
 }
 
 type RestaurantList{
@@ -112,7 +113,9 @@ input VoteInput {
 
 type RootQuery{
   getEvents: [Event!]!
+  getEventByID(eventID: ID!): Event!
   getUsers: [User!]!
+  getVotesByEventID(eventID: ID!): [Vote!]!
   getRestaurantsTripAdvisor(tripAdvisorInput: TripAdvisorInput ): [RestaurantTA]
   getRestaurantTA(restaurantID: ID!): RestaurantTA
   getRestaurantList(listID: ID!): RestaurantList

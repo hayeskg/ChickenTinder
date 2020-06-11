@@ -1,5 +1,4 @@
 const axios = require('axios');
-
 const Event = require('../../models/event');
 const User = require('../../models/user');
 const RestaurantTA = require('../../models/restaurantTA');
@@ -24,6 +23,16 @@ const getEvents = () => {
     })
 }
 
+const getEventByID = (args) => {
+  return Event.findById(args.eventID)
+    .then(event => {
+      return {
+        ...event._doc,
+        _id: event._id
+      }
+    })
+}
+
 const getUsers = () => {
   return User.find()
     .then(users => {
@@ -33,6 +42,19 @@ const getUsers = () => {
           _id: user._id
         }
       })
+    })
+}
+
+const getVotesByEventID = (args) => {
+  return Vote.find({ eventRef: args.eventID })
+    .then(votes => {
+      return votes.map(vote => {
+        return {
+          ...vote._doc,
+          _id: vote._id
+        }
+      })
+
     })
 }
 
@@ -231,18 +253,18 @@ const createEvent = (args) => {
 const createRestaurantTA = (args) => {
   const { location_id, location_string, name, description, cuisine, photo, price, ranking, rating, phone, website, address, dietary_restrictions } = args.restaurantTAInput;
   const restaurantTA = new RestaurantTA({
-    location_id: location_id,
-    location_string: location_string,
-    name: name,
-    description: description,
+    location_id,
+    location_string,
+    name,
+    description,
     cuisine: [...cuisine],
-    photo: photo,
-    price: price,
-    ranking: ranking,
-    rating: rating,
-    phone: phone,
-    website: website,
-    address: address,
+    photo,
+    price,
+    ranking,
+    rating,
+    phone,
+    website,
+    address,
     dietary_restrictions: [...dietary_restrictions]
   })
   return restaurantTA.save()
@@ -261,24 +283,73 @@ const createRestaurantList = (args) => {
 }
 
 const createVote = (args) => {
+  let returnEvent = {};
+  let voteObj = {};
+
   const { eventRef, restaurantRef, positiveVote, negativeVote } = args.voteInput
-  const vote = new Vote(
-    {
-      eventRef,
-      restaurantRef,
-      positiveVote,
-      negativeVote
-    })
+  const vote = new Vote({
+    eventRef,
+    restaurantRef,
+    positiveVote,
+    negativeVote
+  })
   return vote.save()
     .then((vote) => {
       return { ...vote._doc, _id: vote._id }
     })
+  // .then((vote) => {
+  //   console.log(vote.restaurantRef);
+  //   voteObj = vote;
+  //   return Event.findById(vote.eventRef)
+  //     .then(result => {
+  //       returnEvent = {
+  //         attendees: result.attendees,
+  //         _id: result._id,
+  //         eventName: result.eventName,
+  //         eventDate: result.eventDate,
+  //         eventClosingDate: result.eventClosingDate,
+  //         eventLat: result.eventLat,
+  //         eventLong: result.eventLong,
+  //         eventDistance: result.eventDistance,
+  //         eventOrganiser: result.eventOrganiser,
+  //         restaurantList: result.restaurantList,
+  //         votes: [voteObj]
+  //       }
+  //       console.log(returnEvent)
+  //       return returnEvent;
+  //     })
+
+  // return Event.findOneAndUpdate(query, value, { new: true, useFindAndModify: false })
+  //   .then(result => {
+  //     console.log(result);
+  //     returnEvent = {
+  //       attendees: result.attendees,
+  //       _id: result._id,
+  //       eventName: result.eventName,
+  //       eventDate: result.eventDate,
+  //       eventClosingDate: result.eventClosingDate,
+  //       eventLat: result.eventLat,
+  //       eventLong: result.eventLong,
+  //       eventDistance: result.eventDistance,
+  //       eventOrganiser: result.eventOrganiser,
+  //       restaurantList: result.restaurantList,
+  //     }
+  //     return getVotesByEventID({ eventID: result._id })
+  //       .then(votes => {
+  //         returnEvent.votes = [...votes];
+  //         return returnEvent;
+  //       })
+
+  //   })
+  //})
 }
 
 
 module.exports = {
   getEvents,
+  getEventByID,
   getUsers,
+  getVotesByEventID,
   getRestaurantsTripAdvisor,
   getRestaurantTA,
   getRestaurantList,
