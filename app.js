@@ -27,7 +27,7 @@ app.listen(process.env.PORT || 3000, () => {
   console.log(`App is live on Port ${process.env.PORT}`)
 })
 
-mongoose.connect(process.env.MONGODB_URI)
+mongoose.connect(process.env.MONGODB_URI, { useFindAndModify: false })
   .catch(err => {
     console.log(err);
   })

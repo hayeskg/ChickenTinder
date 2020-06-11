@@ -14,7 +14,7 @@ type Event {
   restaurantList: ID!
   restaurants: [RestaurantTA]
   votesRefs : [ID] 
-  votes: [Vote]   
+  votes: [ID]   
   winner: String
   topThree: String
 } 
@@ -25,6 +25,11 @@ type Vote{
   restaurantRef: ID!
   positiveVote: Int!
   negativeVote: Int!
+}
+
+type VoteBox {
+  _id: ID!
+  votes: [Vote!]!
 }
 
 type User {
@@ -111,6 +116,10 @@ input VoteInput {
   negativeVote: Int!
 }
 
+input VoteBoxInput {
+  votes: String
+}
+
 type RootQuery{
   getEvents: [Event!]!
   getEventByID(eventID: ID!): Event!
@@ -127,6 +136,7 @@ type RootMutation{
   createRestaurantTA(restaurantTAInput: RestaurantTAInput): RestaurantTA
   createRestaurantList(restaurantListInput: RestaurantListInput): RestaurantList
   createVote(voteInput: VoteInput): Vote
+  createVoteBox(voteBoxInput: VoteBoxInput): Event
 }
 
 schema{
