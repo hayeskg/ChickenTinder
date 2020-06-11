@@ -7,9 +7,6 @@ const RestaurantTA = require('../../models/restaurantTA');
 const RestaurantTAList = require('../../models/restaruantTAList');
 
 
-
-
-
 //Queries
 const getEvents = () => {
   return Event.find()
@@ -34,28 +31,6 @@ const getUsers = () => {
         return {
           ...user._doc,
           _id: user._id
-        }
-      })
-    })
-}
-
-const getRestaurant = (args) => {
-  return Restaurant.findOne({ _id: args.restaurantId })
-    .then(restaurant => {
-      return {
-        ...restaurant._doc,
-        _id: restaurant._id
-      }
-    })
-}
-
-const getRestaurants = () => {
-  return Restaurant.find()
-    .then(restaurants => {
-      return restaurants.map(restaurant => {
-        return {
-          ...restaurant._doc,
-          _id: restaurant._id
         }
       })
     })
@@ -246,26 +221,11 @@ const createEvent = (args) => {
 
       return event.save()
         .then((event) => {
-          console.log(restaurantsArray);
           return { ...event._doc, _id: event.id, restaurants: restaurantsArray }
         })
     })
 
 
-}
-
-const createRestaurant = (args) => {
-  const restaurant = new Restaurant({
-    venueName: args.restaurantInput.venueName,
-    venueImage: args.restaurantInput.venueImage,
-    venueCity: args.restaurantInput.venueCity,
-    positiveVotes: args.restaurantInput.positiveVotes,
-    negativeVotes: args.restaurantInput.negativeVotes
-  })
-  return restaurant.save()
-    .then((restaurant) => {
-      return { ...restaurant._doc, _id: restaurant.id }
-    })
 }
 
 const createRestaurantTA = (args) => {
@@ -305,14 +265,11 @@ const createRestaurantList = (args) => {
 module.exports = {
   getEvents,
   getUsers,
-  getRestaurant,
-  getRestaurants,
   getRestaurantsTripAdvisor,
   getRestaurantTA,
   getRestaurantList,
   createUser,
   createEvent,
-  createRestaurant,
   createRestaurantTA,
   createRestaurantList
 }

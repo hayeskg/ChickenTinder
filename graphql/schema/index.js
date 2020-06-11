@@ -30,15 +30,6 @@ type User {
   city: String!
 }
 
-type Restaurant{
-  _id: ID!
-  venueName: String!
-  venueImage: String!
-  venueCity: String!
-  positiveVotes: Int!
-  negativeVotes: Int!
-}
-
 type RestaurantTA{
   _id: ID
   location_id: String
@@ -55,6 +46,8 @@ type RestaurantTA{
   address: String
   dietary_restrictions: [String]
   num_reviews: String
+  positiveVotes: Int
+  negativeVotes: Int
 }
 
 type RestaurantList{
@@ -96,14 +89,6 @@ input UserInput{
   city: String!
 }
 
-input RestaurantInput{
-  venueName: String!
-  venueImage: String!
-  venueCity: String!
-  positiveVotes: Int!
-  negativeVotes: Int!
-}
-
 input RestaurantListInput{
   list: [ID]
 }
@@ -117,8 +102,6 @@ input TripAdvisorInput {
 type RootQuery{
   getEvents: [Event!]!
   getUsers: [User!]!
-  getRestaurant(restaurantID: ID!): Restaurant
-  getRestaurants: [Restaurant!]!
   getRestaurantsTripAdvisor(tripAdvisorInput: TripAdvisorInput ): [RestaurantTA]
   getRestaurantTA(restaurantID: ID!): RestaurantTA
   getRestaurantList(listID: ID!): RestaurantList
@@ -127,7 +110,6 @@ type RootQuery{
 type RootMutation{
   createEvent(eventInput: EventInput): Event
   createUser(userInput: UserInput): User
-  createRestaurant(restaurantInput: RestaurantInput): Restaurant
   createRestaurantTA(restaurantTAInput: RestaurantTAInput): RestaurantTA
   createRestaurantList(restaurantListInput: RestaurantListInput): RestaurantList
 }
