@@ -20,6 +20,10 @@ type Event {
 
 type Vote{
   _id: ID
+  eventRef: ID!
+  restaurantRef: ID!
+  positiveVote: Int!
+  negativeVote: Int!
 }
 
 type User {
@@ -99,6 +103,13 @@ input TripAdvisorInput {
   longitude: String!
 }
 
+input VoteInput {
+  eventRef: ID!
+  restaurantRef: ID!
+  positiveVote: Int!
+  negativeVote: Int!
+}
+
 type RootQuery{
   getEvents: [Event!]!
   getUsers: [User!]!
@@ -112,6 +123,7 @@ type RootMutation{
   createUser(userInput: UserInput): User
   createRestaurantTA(restaurantTAInput: RestaurantTAInput): RestaurantTA
   createRestaurantList(restaurantListInput: RestaurantListInput): RestaurantList
+  createVote(voteInput: VoteInput): Vote
 }
 
 schema{

@@ -2,9 +2,9 @@ const axios = require('axios');
 
 const Event = require('../../models/event');
 const User = require('../../models/user');
-const Restaurant = require('../../models/restaurant');
 const RestaurantTA = require('../../models/restaurantTA');
 const RestaurantTAList = require('../../models/restaruantTAList');
+const Vote = require('../../models/vote');
 
 
 //Queries
@@ -260,6 +260,20 @@ const createRestaurantList = (args) => {
     })
 }
 
+const createVote = (args) => {
+  const { eventRef, restaurantRef, positiveVote, negativeVote } = args.voteInput
+  const vote = new Vote(
+    {
+      eventRef,
+      restaurantRef,
+      positiveVote,
+      negativeVote
+    })
+  return vote.save()
+    .then((vote) => {
+      return { ...vote._doc, _id: vote._id }
+    })
+}
 
 
 module.exports = {
@@ -271,5 +285,8 @@ module.exports = {
   createUser,
   createEvent,
   createRestaurantTA,
-  createRestaurantList
+  createRestaurantList,
+  createVote
 }
+
+// eventRef: eventRef, restaurantRef: RestaurantRef, positiveVote: positiveVote, negativeVote: negativeVote
