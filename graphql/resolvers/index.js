@@ -1,13 +1,9 @@
 const axios = require('axios');
-
 const Event = require('../../models/event');
 const User = require('../../models/user');
-const Restaurant = require('../../models/restaurant');
 const RestaurantTA = require('../../models/restaurantTA');
 const RestaurantTAList = require('../../models/restaruantTAList');
-
-
-
+const Vote = require('../../models/vote');
 
 
 //Queries
@@ -27,6 +23,16 @@ const getEvents = () => {
     })
 }
 
+const getEventByID = (args) => {
+  return Event.findById(args.eventID)
+    .then(event => {
+      return {
+        ...event._doc,
+        _id: event._id
+      }
+    })
+}
+
 const getUsers = () => {
   return User.find()
     .then(users => {
@@ -39,25 +45,16 @@ const getUsers = () => {
     })
 }
 
-const getRestaurant = (args) => {
-  return Restaurant.findOne({ _id: args.restaurantId })
-    .then(restaurant => {
-      return {
-        ...restaurant._doc,
-        _id: restaurant._id
-      }
-    })
-}
-
-const getRestaurants = () => {
-  return Restaurant.find()
-    .then(restaurants => {
-      return restaurants.map(restaurant => {
+const getVotesByEventID = (args) => {
+  return Vote.find({ eventRef: args.eventID })
+    .then(votes => {
+      return votes.map(vote => {
         return {
-          ...restaurant._doc,
-          _id: restaurant._id
+          ...vote._doc,
+          _id: vote._id
         }
       })
+
     })
 }
 
@@ -164,69 +161,110 @@ const createUser = (args) => {
 }
 
 const createEvent = (args) => {
-  const event = new Event({
-    eventName: args.eventInput.eventName,
-    eventLocation: args.eventInput.eventLocation,
-    members: [...args.eventInput.members]
-  });
-  let createdEvent;
-  return event
-    .save()
-    .then(savedEvent => {
-      let users = [];
-      users = savedEvent.members.map(id => {
-        return User.findById(id)
-          .then(user => {
-            return {
-              ...user._doc,
-              _id: user.id
-            }
-          })
-      })
-      createdEvent = {
-        ...savedEvent._doc,
-        _id: savedEvent._doc._id.toString(),
-        members: [...users]
-      }
-      console.log(createdEvent)
-      return createdEvent;
-    })
-    .then()
-    .catch(err => {
-      console.log(err);
-      throw err;
-    });
-}
+  //form input from front end
+  const {
+    eventName,
+    eventDate,
+    eventClosingDate,
+    eventLat,
+    eventLong,
+    eventDistance,
+    eventOrganiser,
+    attendees
+  } = args.eventInput
 
-const createRestaurant = (args) => {
-  const restaurant = new Restaurant({
-    venueName: args.restaurantInput.venueName,
-    venueImage: args.restaurantInput.venueImage,
-    venueCity: args.restaurantInput.venueCity,
-    positiveVotes: args.restaurantInput.positiveVotes,
-    negativeVotes: args.restaurantInput.negativeVotes
-  })
-  return restaurant.save()
-    .then((restaurant) => {
-      return { ...restaurant._doc, _id: restaurant.id }
+  //input object for tr
+  const input = {
+    tripAdvisorInput: {
+      distance: eventDistance,
+      latitude: eventLat,
+      longitude: eventLong
+    }
+  }
+
+  let restaurantsArray = [];
+
+  return restaurantPool = getRestaurantsTripAdvisor(input)
+    .then((list) => {
+      // let arr = []
+      return Promise.all(list.map(restaurant => {
+        const input = {
+          restaurantTAInput: {
+            location_id: restaurant.location_id,
+            location_string: restaurant.location_string,
+            name: restaurant.name,
+            description: restaurant.description,
+            cuisine: [...restaurant.cuisine],
+            photo: restaurant.photo,
+            price: restaurant.price,
+            ranking: restaurant.ranking,
+            rating: restaurant.rating,
+            phone: restaurant.phone,
+            website: restaurant.website,
+            address: restaurant.address,
+            dietary_restrictions: [...restaurant.dietary_restrictions]
+          }
+        }
+        return createRestaurantTA(input)
+          .then((restaurantDB) => {
+            //console.log(restaurantDB)
+            return restaurantDB;
+          })
+      }))
     })
+    .then(restaurantsDB => {
+      let restaurantIDs = [];
+      restaurantsArray = [...restaurantsDB];
+      restaurantIDs = restaurantsDB.map(restaurantDB => {
+        return restaurantDB._id;
+      })
+      const input = {
+        restaurantListInput: {
+          list: restaurantIDs
+        }
+      }
+      return createRestaurantList(input);
+    })
+    .then(restaurantList => {
+
+      const eventInput = {
+        eventName: eventName,
+        eventDate: eventDate,
+        eventClosingDate: eventClosingDate,
+        eventLat: eventLat,
+        eventLong: eventLong,
+        eventDistance: eventDistance,
+        eventOrganiser: eventOrganiser,
+        attendees: [...attendees],
+        restaurantList: restaurantList._id
+      }
+      const event = new Event(eventInput)
+
+
+      return event.save()
+        .then((event) => {
+          return { ...event._doc, _id: event.id, restaurants: restaurantsArray }
+        })
+    })
+
+
 }
 
 const createRestaurantTA = (args) => {
   const { location_id, location_string, name, description, cuisine, photo, price, ranking, rating, phone, website, address, dietary_restrictions } = args.restaurantTAInput;
   const restaurantTA = new RestaurantTA({
-    location_id: location_id,
-    location_string: location_string,
-    name: name,
-    description: description,
+    location_id,
+    location_string,
+    name,
+    description,
     cuisine: [...cuisine],
-    photo: photo,
-    price: price,
-    ranking: ranking,
-    rating: rating,
-    phone: phone,
-    website: website,
-    address: address,
+    photo,
+    price,
+    ranking,
+    rating,
+    phone,
+    website,
+    address,
     dietary_restrictions: [...dietary_restrictions]
   })
   return restaurantTA.save()
@@ -244,19 +282,82 @@ const createRestaurantList = (args) => {
     })
 }
 
+const createVote = (args) => {
+  let returnEvent = {};
+  let voteObj = {};
+
+  const { eventRef, restaurantRef, positiveVote, negativeVote } = args.voteInput
+  const vote = new Vote({
+    eventRef,
+    restaurantRef,
+    positiveVote,
+    negativeVote
+  })
+  return vote.save()
+    .then((vote) => {
+      return { ...vote._doc, _id: vote._id }
+    })
+  // .then((vote) => {
+  //   console.log(vote.restaurantRef);
+  //   voteObj = vote;
+  //   return Event.findById(vote.eventRef)
+  //     .then(result => {
+  //       returnEvent = {
+  //         attendees: result.attendees,
+  //         _id: result._id,
+  //         eventName: result.eventName,
+  //         eventDate: result.eventDate,
+  //         eventClosingDate: result.eventClosingDate,
+  //         eventLat: result.eventLat,
+  //         eventLong: result.eventLong,
+  //         eventDistance: result.eventDistance,
+  //         eventOrganiser: result.eventOrganiser,
+  //         restaurantList: result.restaurantList,
+  //         votes: [voteObj]
+  //       }
+  //       console.log(returnEvent)
+  //       return returnEvent;
+  //     })
+
+  // return Event.findOneAndUpdate(query, value, { new: true, useFindAndModify: false })
+  //   .then(result => {
+  //     console.log(result);
+  //     returnEvent = {
+  //       attendees: result.attendees,
+  //       _id: result._id,
+  //       eventName: result.eventName,
+  //       eventDate: result.eventDate,
+  //       eventClosingDate: result.eventClosingDate,
+  //       eventLat: result.eventLat,
+  //       eventLong: result.eventLong,
+  //       eventDistance: result.eventDistance,
+  //       eventOrganiser: result.eventOrganiser,
+  //       restaurantList: result.restaurantList,
+  //     }
+  //     return getVotesByEventID({ eventID: result._id })
+  //       .then(votes => {
+  //         returnEvent.votes = [...votes];
+  //         return returnEvent;
+  //       })
+
+  //   })
+  //})
+}
 
 
 module.exports = {
   getEvents,
+  getEventByID,
   getUsers,
-  getRestaurant,
-  getRestaurants,
+  getVotesByEventID,
   getRestaurantsTripAdvisor,
   getRestaurantTA,
   getRestaurantList,
   createUser,
   createEvent,
-  createRestaurant,
   createRestaurantTA,
-  createRestaurantList
+  createRestaurantList,
+  createVote
 }
+
+// eventRef: eventRef, restaurantRef: RestaurantRef, positiveVote: positiveVote, negativeVote: negativeVote

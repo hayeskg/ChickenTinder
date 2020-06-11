@@ -4,24 +4,35 @@ module.exports = buildSchema(`
 type Event {
   _id: ID!
   eventName: String!
-  eventLocation: String!
-  members: [User!]!
+  eventDate: String!
+  eventClosingDate: String!
+  eventLat: String!
+  eventLong: String!
+  eventDistance: String!
+  eventOrganiser: String!
+  attendees: [String!]!
+  restaurantList: ID!
+  restaurants: [RestaurantTA]
+  votesRefs : [ID] 
+  votes: [Vote]   
+  winner: String
+  topThree: String
+} 
+
+type Vote{
+  _id: ID
+  eventRef: ID!
+  restaurantRef: ID!
+  positiveVote: Int!
+  negativeVote: Int!
 }
 
 type User {
   _id: ID!
   email: String!
+  password: String!
   firstName: String!
   city: String!
-}
-
-type Restaurant{
-  _id: ID!
-  venueName: String!
-  venueImage: String!
-  venueCity: String!
-  positiveVotes: Int!
-  negativeVotes: Int!
 }
 
 type RestaurantTA{
@@ -40,6 +51,8 @@ type RestaurantTA{
   address: String
   dietary_restrictions: [String]
   num_reviews: String
+  positiveVotes: Int!
+  negativeVotes: Int!
 }
 
 type RestaurantList{
@@ -65,22 +78,20 @@ input RestaurantTAInput{
 
 input EventInput{
   eventName: String!
-  eventLocation: String!
-  members: [ID!]!
+  eventDate: String!
+  eventClosingDate: String!
+  eventLat: String!
+  eventLong: String!
+  eventDistance: String
+  eventOrganiser: String!
+  attendees: [String!]
 }
 
 input UserInput{
   email: String!
+  password: String!
   firstName: String!
   city: String!
-}
-
-input RestaurantInput{
-  venueName: String!
-  venueImage: String!
-  venueCity: String!
-  positiveVotes: Int!
-  negativeVotes: Int!
 }
 
 input RestaurantListInput{
@@ -93,11 +104,18 @@ input TripAdvisorInput {
   longitude: String!
 }
 
+input VoteInput {
+  eventRef: ID!
+  restaurantRef: ID!
+  positiveVote: Int!
+  negativeVote: Int!
+}
+
 type RootQuery{
   getEvents: [Event!]!
+  getEventByID(eventID: ID!): Event!
   getUsers: [User!]!
-  getRestaurant(restaurantID: ID!): Restaurant
-  getRestaurants: [Restaurant!]!
+  getVotesByEventID(eventID: ID!): [Vote!]!
   getRestaurantsTripAdvisor(tripAdvisorInput: TripAdvisorInput ): [RestaurantTA]
   getRestaurantTA(restaurantID: ID!): RestaurantTA
   getRestaurantList(listID: ID!): RestaurantList
@@ -106,9 +124,9 @@ type RootQuery{
 type RootMutation{
   createEvent(eventInput: EventInput): Event
   createUser(userInput: UserInput): User
-  createRestaurant(restaurantInput: RestaurantInput): Restaurant
   createRestaurantTA(restaurantTAInput: RestaurantTAInput): RestaurantTA
   createRestaurantList(restaurantListInput: RestaurantListInput): RestaurantList
+  createVote(voteInput: VoteInput): Vote
 }
 
 schema{

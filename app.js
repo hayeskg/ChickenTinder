@@ -4,8 +4,6 @@ const app = express();
 const cors = require('cors');
 const dotenv = require('dotenv').config();
 const graphQlHttp = require('express-graphql');//middleware
-// const bodyParser = require('body-parser');
-// const { ApolloServer, gql } = require('apollo-server-express');
 
 
 const graphQlSchema = require('./graphql/schema/index');
@@ -33,3 +31,22 @@ mongoose.connect(process.env.MONGODB_URI)
   .catch(err => {
     console.log(err);
   })
+
+
+// for React app deployment on Heroku integration
+//
+// const path = require('path');
+
+// if (process.env.NODE_ENV === 'production'){
+//   app.use(express.static('client/build'));
+
+//   app.get('*', (req, res)=>{
+//     res.sendFile(path.join(__dirname, 'client', 'build', 'index.html'));
+//   })
+// }
+// add this script to package.json
+// "heroku-postbuild": "cd client && npm install && npm run build"
+// "engines":{
+//   "node": "14.4.0"
+// }
+// Procfile web: npm start
