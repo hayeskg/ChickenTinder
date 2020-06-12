@@ -24,12 +24,29 @@ const getEvents = () => {
 }
 
 const getEventByID = (args) => {
+  let restaurantArr = [];
+  let tempEvent = {};
   return Event.findById(args.eventID)
     .then(event => {
-      return {
-        ...event._doc,
-        _id: event._id
-      }
+      tempEvent = event;
+      return getRestaurantList({ listID: event.restaurantList })
+        .then(restaurantList => {
+          return Promise.all(restaurantList.list.map(ID => {
+            return getRestaurantTA({ restaurantID: ID })
+              .then(singleRestaurant => {
+                return singleRestaurant
+              })
+          }))
+            .then((list) => {
+              restaurantArr = [...list]
+              return restaurantArr
+            })
+        })
+        .then(restaurantArr => {
+          tempEvent.restaurants = restaurantArr;
+          console.log(tempEvent)
+          return tempEvent
+        })
     })
 }
 
@@ -186,7 +203,6 @@ const createEvent = (args) => {
 
   return restaurantPool = getRestaurantsTripAdvisor(input)
     .then((list) => {
-      // let arr = []
       return Promise.all(list.map(restaurant => {
         const input = {
           restaurantTAInput: {
@@ -212,6 +228,7 @@ const createEvent = (args) => {
           })
       }))
     })
+    //get rid of empty restaurant objes
     .then(restaurantsDB => {
       let restaurantIDs = [];
       restaurantsArray = [...restaurantsDB];
@@ -239,7 +256,6 @@ const createEvent = (args) => {
         restaurantList: restaurantList._id
       }
       const event = new Event(eventInput)
-
 
       return event.save()
         .then((event) => {
@@ -283,9 +299,7 @@ const createRestaurantList = (args) => {
 }
 
 const createVote = (args) => {
-  let returnEvent = {};
-  let voteObj = {};
-
+  let votesArr = [];
   const { eventRef, restaurantRef, positiveVote, negativeVote } = args.voteInput
   const vote = new Vote({
     eventRef,
@@ -295,55 +309,26 @@ const createVote = (args) => {
   })
   return vote.save()
     .then((vote) => {
+      votesArr.push(vote._id);
       return { ...vote._doc, _id: vote._id }
     })
-  // .then((vote) => {
-  //   console.log(vote.restaurantRef);
-  //   voteObj = vote;
-  //   return Event.findById(vote.eventRef)
-  //     .then(result => {
-  //       returnEvent = {
-  //         attendees: result.attendees,
-  //         _id: result._id,
-  //         eventName: result.eventName,
-  //         eventDate: result.eventDate,
-  //         eventClosingDate: result.eventClosingDate,
-  //         eventLat: result.eventLat,
-  //         eventLong: result.eventLong,
-  //         eventDistance: result.eventDistance,
-  //         eventOrganiser: result.eventOrganiser,
-  //         restaurantList: result.restaurantList,
-  //         votes: [voteObj]
-  //       }
-  //       console.log(returnEvent)
-  //       return returnEvent;
-  //     })
+    .then((vote) => {
 
-  // return Event.findOneAndUpdate(query, value, { new: true, useFindAndModify: false })
-  //   .then(result => {
-  //     console.log(result);
-  //     returnEvent = {
-  //       attendees: result.attendees,
-  //       _id: result._id,
-  //       eventName: result.eventName,
-  //       eventDate: result.eventDate,
-  //       eventClosingDate: result.eventClosingDate,
-  //       eventLat: result.eventLat,
-  //       eventLong: result.eventLong,
-  //       eventDistance: result.eventDistance,
-  //       eventOrganiser: result.eventOrganiser,
-  //       restaurantList: result.restaurantList,
-  //     }
-  //     return getVotesByEventID({ eventID: result._id })
-  //       .then(votes => {
-  //         returnEvent.votes = [...votes];
-  //         return returnEvent;
-  //       })
-
-  //   })
-  //})
+      return Event.findById(vote.eventRef)
+        .then((event) => {
+          event.votes.map(vote => {
+            votesArr.push(vote);
+          })
+          return event
+        })
+        .then((event) => {
+          return Event.findOneAndUpdate({ _id: event._id }, { $set: { votes: votesArr } }, { new: true })
+            .then((event) => {
+              return vote;
+            })
+        })
+    })
 }
-
 
 module.exports = {
   getEvents,
@@ -360,4 +345,3 @@ module.exports = {
   createVote
 }
 
-// eventRef: eventRef, restaurantRef: RestaurantRef, positiveVote: positiveVote, negativeVote: negativeVote
