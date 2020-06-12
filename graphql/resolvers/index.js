@@ -44,6 +44,7 @@ const getEventByID = (args) => {
         })
         .then(restaurantArr => {
           tempEvent.restaurants = restaurantArr;
+          console.log(tempEvent)
           return tempEvent
         })
     })
