@@ -24,12 +24,28 @@ const getEvents = () => {
 }
 
 const getEventByID = (args) => {
+  let restaurantArr = [];
+  let tempEvent = {};
   return Event.findById(args.eventID)
     .then(event => {
-      return {
-        ...event._doc,
-        _id: event._id
-      }
+      tempEvent = event;
+      return getRestaurantList({ listID: event.restaurantList })
+        .then(restaurantList => {
+          return Promise.all(restaurantList.list.map(ID => {
+            return getRestaurantTA({ restaurantID: ID })
+              .then(singleRestaurant => {
+                return singleRestaurant
+              })
+          }))
+            .then((list) => {
+              restaurantArr = [...list]
+              return restaurantArr
+            })
+        })
+        .then(restaurantArr => {
+          tempEvent.restaurants = restaurantArr;
+          return tempEvent
+        })
     })
 }
 
