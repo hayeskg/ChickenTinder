@@ -128,6 +128,7 @@ type RootQuery{
   getRestaurantsTripAdvisor(tripAdvisorInput: TripAdvisorInput ): [RestaurantTA]
   getRestaurantTA(restaurantID: ID!): RestaurantTA
   getRestaurantList(listID: ID!): RestaurantList
+  getWinner(eventID: ID!): RestaurantTA
 }
 
 type RootMutation{

@@ -4,6 +4,7 @@ const User = require('../../models/user');
 const RestaurantTA = require('../../models/restaurantTA');
 const RestaurantTAList = require('../../models/restaruantTAList');
 const Vote = require('../../models/vote');
+const voteWinner = require('../../utils/voteWinner');
 
 
 //Queries
@@ -162,6 +163,35 @@ const getRestaurantList = (args) => {
         _id: restaurantList._id
       }
     })
+}
+
+const getWinner = (args) => {
+  groupSize = 0;
+  restaurantRankObjects = []; // pos + neg for a restaurant
+
+  // {
+  //   restaurantref:
+  //   score:
+  //   post
+  //   neg
+  // }
+
+  getEventByID(args.eventID)
+    .then(event => {
+      return groupSize = event.attendees.length + 1;
+    })
+    .then(() => {
+      getVotesByEventID(args.eventID)
+        .then(votes => {
+          Promise.all(votes.map(voteObj => {
+            let RankObj = {};
+            // RankObj.restaurantRef = voteObj.restaurantRef,
+            //   RankObj.positiveVote = voteObj.positiveVote,
+            //   RankObj, negativeVote = voteObj.negativeVote,
+          }))
+        })
+    })
+
 }
 
 ///Mutations
@@ -338,6 +368,7 @@ module.exports = {
   getRestaurantsTripAdvisor,
   getRestaurantTA,
   getRestaurantList,
+  getWinner,
   createUser,
   createEvent,
   createRestaurantTA,
