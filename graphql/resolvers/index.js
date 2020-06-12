@@ -4,7 +4,8 @@ const User = require('../../models/user');
 const RestaurantTA = require('../../models/restaurantTA');
 const RestaurantTAList = require('../../models/restaruantTAList');
 const Vote = require('../../models/vote');
-const voteWinner = require('../../utils/voteWinner');
+const voteWinnerUtil = require('../../utils/voteWinner');
+const getVotesByRestaurantUtil = require('../../utils/getVotesByRestaurant');
 
 
 //Queries
@@ -178,17 +179,27 @@ const getWinner = (args) => {
 
   getEventByID(args.eventID)
     .then(event => {
+      console.log('got event')
       return groupSize = event.attendees.length + 1;
     })
     .then(() => {
       getVotesByEventID(args.eventID)
         .then(votes => {
-          Promise.all(votes.map(voteObj => {
-            let RankObj = {};
-            // RankObj.restaurantRef = voteObj.restaurantRef,
-            //   RankObj.positiveVote = voteObj.positiveVote,
-            //   RankObj, negativeVote = voteObj.negativeVote,
-          }))
+          console.log('got votes')
+          getVotesByRestaurantUtil(votes)
+            .then(voteTally => {
+
+              Promise.all(voteTally.map(voteObj => {
+                let totVotes = voteObj.totalPos + voteObj.totalNeg;
+                return voteWinnerUtil(groupSize, totVotes, voteObj.totalPos, voteObjtotalNeg)
+
+              }))
+                .then(scoresArr => {
+                  items.sort(function (a, b) {
+                    return a.value - b.value;
+                  })
+                })
+            })
         })
     })
 
@@ -343,7 +354,6 @@ const createVote = (args) => {
       return { ...vote._doc, _id: vote._id }
     })
     .then((vote) => {
-
       return Event.findById(vote.eventRef)
         .then((event) => {
           event.votes.map(vote => {
