@@ -1,6 +1,6 @@
 const graphql = require('graphql');
 const GraphQLDate = require('graphql-date');
-const _ = require('lodash'); //is this needed?
+const { getTripAdvisorRestaurants } = require('../../../utils/getTripAdvisorRestaurants')
 
 const {
   GraphQLObjectType,
@@ -90,6 +90,7 @@ const RestaurantType = new GraphQLObjectType({
     id: { type: GraphQLID },
     eventId: { type: GraphQLID },
     name: { type: GraphQLString },
+    description: { type: GraphQLString },
     photo: { type: GraphQLString },
     price: { type: GraphQLString },
     ranking: { type: GraphQLString },
@@ -207,7 +208,39 @@ const Mutation = new GraphQLObjectType({
           long: args.long,
           distance: args.distance
         });
-        return event.save();
+        let createdEvent = {};
+        event.save()
+          .then(event => {
+            createdEvent = event;
+            console.log(createdEvent)
+            return event;
+          })
+          .then(() => {
+            getTripAdvisorRestaurants({
+              distance: args.distance, lat: args.lat, long: args.long
+            })
+              .then(restaurantsArr => {
+                // let createdRestaurants = [];
+                // createdRestaurants = Promise.all(restaurantsArr.map(restaurant => {
+                //   let restaurantInput = {
+                //     eventId: createdEvent._id,
+                //     name: restaurant.name,
+                //     description: restaurant.description,
+                //     photo: restaurant.photo.images.original.url,
+                //     price: restaurant.price_level,
+                //     ranking: restaurant.ranking,
+                //     rating: restaurant.rating,
+                //     phone: restaurant.phone,
+                //     website: restaurant.website,
+                //     address: restaurant.address,
+                //     cuisine: [...restaurant.cuisine],
+                //     dietRestrictions: [...restaurant.dietary_restrictions]
+                //   }
+                //   // return addRestaurant(restaurantInput);
+                // }))
+                console.log(restaurantsArr);
+              })
+          })
       }
     },
     addRestaurant: {
@@ -215,6 +248,7 @@ const Mutation = new GraphQLObjectType({
       args: {
         eventId: { type: new GraphQLNonNull(GraphQLID) },
         name: { type: new GraphQLNonNull(GraphQLString) },
+        description: { type: GraphQLString },
         photo: { type: GraphQLString },
         price: { type: GraphQLString },
         ranking: { type: GraphQLString },
@@ -233,6 +267,7 @@ const Mutation = new GraphQLObjectType({
         let restaurant = new Restaurant({
           eventId: args.eventId,
           name: args.name,
+          desciiption: args.description,
           photo: args.photo,
           price: args.price,
           ranking: args.ranking,
