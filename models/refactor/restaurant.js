@@ -13,7 +13,6 @@ const restaurantSchema = new Schema({
   address: String,
   cuisine: [String],
   dietRestrictions: [String]
-
 })
 
 module.exports = mongoose.model('Restaurant', restaurantSchema);

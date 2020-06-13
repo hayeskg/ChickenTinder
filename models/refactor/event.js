@@ -6,12 +6,7 @@ const eventSchema = new Schema({
   date: Date,
   lat: String,
   long: String,
-  distance: String,
-  // organiser: type user
-  // members:  array ot type user
-  // restaurants: array of type restaurants
-  // votes: array of type votes
-  // winner: type restaurant
+  distance: String
 })
 
 module.exports = mongoose.model('Event', eventSchema);

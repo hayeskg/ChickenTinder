@@ -6,10 +6,7 @@ const userSchema = new Schema({
   name: String,
   email: String,
   password: String,
-  city: String,
-
-  // votes: array of type Vote
-
+  city: String
 })
 
 module.exports = mongoose.model('User', userSchema);

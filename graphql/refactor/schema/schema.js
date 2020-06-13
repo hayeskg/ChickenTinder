@@ -193,16 +193,11 @@ const Mutation = new GraphQLObjectType({
     addEvent: {
       type: EventType,
       args: {
-        name: { type: GraphQLString },
-        date: { type: GraphQLDate },
-        lat: { type: GraphQLString },
-        long: { type: GraphQLString },
-        distance: { type: GraphQLString }
-        // organiser: type user
-        // members:  array ot type user
-        // restaurants: array of type restaurants
-        // votes: array of type votes
-        // winner: type restaurant
+        name: { type: new GraphQLNonNull(GraphQLString) },
+        date: { type: new GraphQLNonNull(GraphQLDate) },
+        lat: { type: new GraphQLNonNull(GraphQLString) },
+        long: { type: new GraphQLNonNull(GraphQLString) },
+        distance: { type: new GraphQLNonNull(GraphQLString) }
       },
       resolve(parent, args) {
         let event = new Event({
@@ -211,11 +206,6 @@ const Mutation = new GraphQLObjectType({
           lat: args.lat,
           long: args.long,
           distance: args.distance
-          // organiser: type user
-          // members:  array ot type user
-          // restaurants: array of type restaurants
-          // votes: array of type votes
-          // winner: type restaurant
         });
         return event.save();
       }
@@ -223,8 +213,8 @@ const Mutation = new GraphQLObjectType({
     addRestaurant: {
       type: RestaurantType,
       args: {
-        eventId: { type: GraphQLID },
-        name: { type: GraphQLString },
+        eventId: { type: new GraphQLNonNull(GraphQLID) },
+        name: { type: new GraphQLNonNull(GraphQLString) },
         photo: { type: GraphQLString },
         price: { type: GraphQLString },
         ranking: { type: GraphQLString },
@@ -259,14 +249,11 @@ const Mutation = new GraphQLObjectType({
     addUser: {
       type: UserType,
       args: {
-        name: { type: GraphQLString },
-        email: { type: GraphQLString },
-        password: { type: GraphQLString },
-        city: { type: GraphQLString },
+        name: { type: new GraphQLNonNull(GraphQLString) },
+        email: { type: new GraphQLNonNull(GraphQLString) },
+        password: { type: new GraphQLNonNull(GraphQLString) },
+        city: { type: new GraphQLNonNull(GraphQLString) },
         eventId: { type: GraphQLID },
-        // votes: {
-        //   type: new GraphQLList(VoteType),
-        // },
       },
       resolve(parent, args) {
         let user = new User({
@@ -275,7 +262,6 @@ const Mutation = new GraphQLObjectType({
           email: args.email,
           password: args.password,
           city: args.city,
-          // votes: array of type Vote
         });
         return user.save();
       }
@@ -283,11 +269,11 @@ const Mutation = new GraphQLObjectType({
     addVote: {
       type: VoteType,
       args: {
-        eventId: { type: GraphQLID },
-        restaurantId: { type: GraphQLID },
-        userId: { type: GraphQLID },
-        positiveVote: { type: GraphQLInt },
-        negativeVote: { type: GraphQLInt }
+        eventId: { type: new GraphQLNonNull(GraphQLID) },
+        restaurantId: { type: new GraphQLNonNull(GraphQLID) },
+        userId: { type: new GraphQLNonNull(GraphQLID) },
+        positiveVote: { type: new GraphQLNonNull(GraphQLInt) },
+        negativeVote: { type: new GraphQLNonNull(GraphQLInt) }
       },
       resolve(parent, args) {
         let vote = new Vote({

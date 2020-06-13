@@ -6,8 +6,7 @@ const voteSchema = new Schema({
   restaurantId: String,
   userId: String,
   positiveVote: Number,
-  negativeVote: Number,
-
+  negativeVote: Number
 })
 
 module.exports = mongoose.model('Vote', voteSchema);
