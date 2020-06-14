@@ -17,6 +17,17 @@ const Restaurant = require('../../../models/refactor/restaurant');
 const User = require('../../../models/refactor/user');
 const Vote = require('../../../models/refactor/vote');
 
+const {
+  getEventByID,
+  getEvents,
+  getUserByID,
+  getUsers,
+  getRestaurantByID,
+  getRestaurants,
+  getVoteByID,
+  getVotes
+} = require('../resolvers/resolvers')
+
 const EventType = new GraphQLObjectType({
   name: 'Event',
   fields: () => ({
@@ -126,63 +137,52 @@ const RootQuery = new GraphQLObjectType({
       type: EventType,
       args: { id: { type: GraphQLID } },
       resolve(parent, args) {
-        //code to get data from db/api
-        //return using lodash - rewrite for mongo
-        //return _.find(eventsdb, {id: args.id})
-        return Event.findById(args.id);
-
+        return getEventByID(args.id);
       }
     },
     events: {
       type: new GraphQLList(EventType),
       resolve(parent, args) {
-        //return all events
-        return Event.find();
+        return getEvents();
       }
     },
     user: {
       type: UserType,
       args: { id: { type: GraphQLID } },
       resolve(parent, args) {
-        //code to get data from db/api where usersdb/id == args.id
-        return User.findById(args.id);
+        return getUserByID(args.id);
       }
     },
     users: {
       type: new GraphQLList(UserType),
       resolve(parent, args) {
-        //return all users
-        return User.find();
+        return getUsers();
       }
     },
     restaurant: {
       type: RestaurantType,
       args: { id: { type: GraphQLID } },
       resolve(parent, args) {
-        //code to get data from db/api where restaurantsdb/id == args.id
-        return Restaurant.findById(args.id);
+        return getRestaurantByID(args.id);
       }
     },
     restaurants: {
       type: new GraphQLList(RestaurantType),
       resolve(parent, args) {
-        //return all restaurants
-        return Restaurant.find();
+        return getRestaurants();
       }
     },
     vote: {
       type: VoteType,
       args: { id: { type: GraphQLID } },
       resolve(parent, args) {
-        //code to get data from db/api where votesdb/id == args.id
-        return Vote.findById(args.id);
+        return getVoteByID(args.id);
       }
     },
     votes: {
       type: new GraphQLList(VoteType),
       resolve(parent, args) {
-        //return all votes
-        return Vote.find();
+        return getVotes();
       }
     },
   }
