@@ -26,7 +26,14 @@ const {
   getRestaurants,
   getVoteByID,
   getVotes
-} = require('../resolvers/resolvers')
+} = require('../resolvers/queryResolvers')
+
+const {
+  createEvent,
+  createUser,
+  createRestaurant,
+  createVote
+} = require('../resolvers/mutationResolvers')
 
 const EventType = new GraphQLObjectType({
   name: 'Event',
@@ -201,45 +208,60 @@ const Mutation = new GraphQLObjectType({
         distance: { type: new GraphQLNonNull(GraphQLString) }
       },
       resolve(parent, args) {
-        let event = new Event({
+        let input = {
           name: args.name,
           date: args.date,
           lat: args.lat,
           long: args.long,
           distance: args.distance
-        });
+        };
         let createdEvent = {};
-        event.save()
+        return createEvent(input)
           .then(event => {
             createdEvent = event;
-            console.log(createdEvent)
-            return event;
-          })
-          .then(() => {
-            getTripAdvisorRestaurants({
+            return getTripAdvisorRestaurants({
               distance: args.distance, lat: args.lat, long: args.long
             })
               .then(restaurantsArr => {
-                // let createdRestaurants = [];
-                // createdRestaurants = Promise.all(restaurantsArr.map(restaurant => {
-                //   let restaurantInput = {
-                //     eventId: createdEvent._id,
-                //     name: restaurant.name,
-                //     description: restaurant.description,
-                //     photo: restaurant.photo.images.original.url,
-                //     price: restaurant.price_level,
-                //     ranking: restaurant.ranking,
-                //     rating: restaurant.rating,
-                //     phone: restaurant.phone,
-                //     website: restaurant.website,
-                //     address: restaurant.address,
-                //     cuisine: [...restaurant.cuisine],
-                //     dietRestrictions: [...restaurant.dietary_restrictions]
-                //   }
-                //   // return addRestaurant(restaurantInput);
-                // }))
-                console.log(restaurantsArr);
+                let createdRestaurants = [];
+                let cuisineArr = [];
+                let dietRestArr = [];
+                return createdRestaurants = Promise.all(restaurantsArr.map(restaurant => {
+                  if (restaurant.photo) {
+                    if (restaurant.cuisine) {
+                      cuisineArr = restaurant.cuisine.map(cuisine => {
+                        return cuisine.name;
+                      })
+                    }
+                    if (restaurant.dietary_restrictions) {
+                      dietRestArr = restaurant.dietary_restrictions.map(diet => {
+                        return diet.name;
+                      })
+                    }
+                    let restaurantInput = {
+                      eventId: createdEvent._id,
+                      name: restaurant.name || 'name not available',
+                      description: restaurant.description || 'description not available',
+                      photo: restaurant.photo.images.original.url || 'photo not available',
+                      price: restaurant.price_level || 'price not available',
+                      ranking: restaurant.ranking || 'ranking not available',
+                      rating: restaurant.rating || 'rating not available',
+                      phone: restaurant.phone || 'phone not available',
+                      website: restaurant.website || 'website not available',
+                      address: restaurant.address || 'address not available',
+                      cuisine: cuisineArr || 'cuisine not available',
+                      dietRestrictions: dietRestArr || 'dietary restructions not available'
+                    }
+                    return createRestaurant(restaurantInput);
+
+                  } else {
+                    return {};
+                  }
+                }))
               })
+          })
+          .then(() => {
+            return createdEvent;
           })
       }
     },
@@ -264,10 +286,10 @@ const Mutation = new GraphQLObjectType({
         }
       },
       resolve(parent, args) {
-        let restaurant = new Restaurant({
+        let restaurantInput = {
           eventId: args.eventId,
           name: args.name,
-          desciiption: args.description,
+          description: args.description,
           photo: args.photo,
           price: args.price,
           ranking: args.ranking,
@@ -277,28 +299,29 @@ const Mutation = new GraphQLObjectType({
           address: args.address,
           cuisine: args.cuisine,
           dietRestrictions: args.dietRestrictions
-        });
-        return restaurant.save();
+        };
+        return createRestaurant(restaurantInput);
       }
     },
     addUser: {
       type: UserType,
       args: {
+        eventId: { type: GraphQLID },
         name: { type: new GraphQLNonNull(GraphQLString) },
         email: { type: new GraphQLNonNull(GraphQLString) },
         password: { type: new GraphQLNonNull(GraphQLString) },
         city: { type: new GraphQLNonNull(GraphQLString) },
-        eventId: { type: GraphQLID },
+
       },
       resolve(parent, args) {
-        let user = new User({
+        let userInput = {
           eventId: args.eventId,
           name: args.name,
           email: args.email,
           password: args.password,
           city: args.city,
-        });
-        return user.save();
+        };
+        return createUser(userInput);
       }
     },
     addVote: {
@@ -311,14 +334,14 @@ const Mutation = new GraphQLObjectType({
         negativeVote: { type: new GraphQLNonNull(GraphQLInt) }
       },
       resolve(parent, args) {
-        let vote = new Vote({
+        let voteInput = {
           eventId: args.eventId,
           restaurantId: args.restaurantId,
           userId: args.userId,
           positiveVote: args.positiveVote,
           negativeVote: args.negativeVote
-        });
-        return vote.save();
+        };
+        return createVote(voteInput);
       }
     },
   }
