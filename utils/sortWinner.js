@@ -1,5 +1,4 @@
 const sortWinner = (scoreObjArr) => {
-
   var theWinnerIs = [];
   for (var score in scoreObjArr) {
     theWinnerIs.push([score, scoreObjArr[score]]);

@@ -8,3 +8,5 @@ const voteWinner = (groupSize, totalVotes, positiveVotes, negativeVotes, restaur
 };
 
 module.exports = { voteWinner };
+
+

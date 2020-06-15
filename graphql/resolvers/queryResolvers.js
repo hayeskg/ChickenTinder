@@ -85,8 +85,6 @@ const calculateWinner = (eventId) => {
   })
 }
 
-
-
 module.exports = {
   getEventByID,
   getEvents,
