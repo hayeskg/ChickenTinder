@@ -113,4 +113,11 @@ describe('Vote Weighting always getting the right winner', () => {
     const totalVotes = positiveVotes + negativeVotes;
     expect(voteWinner(groupSize, totalVotes, positiveVotes, negativeVotes)).toEqual(5.2);
   });
+  test('Returns a vote Score for a group of 5 with 1 positiveVotes 4 missing, Restaurant Score to be 5.4', () => {
+    const groupSize = 5;
+    const positiveVotes = 1;
+    const negativeVotes = 0;
+    const totalVotes = positiveVotes + negativeVotes;
+    expect(voteWinner(groupSize, totalVotes, positiveVotes, negativeVotes)).toEqual(5.4);
+  });
 });
