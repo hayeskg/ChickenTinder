@@ -1,10 +1,8 @@
 
-const Event = require('../../../models/refactor/event');
-const Restaurant = require('../../../models/refactor/restaurant');
-const User = require('../../../models/refactor/user');
-const Vote = require('../../../models/refactor/vote');
-const restaurant = require('../../../models/refactor/restaurant');
-
+const Event = require('../models/event');
+const Restaurant = require('../models/restaurant');
+const User = require('../models/user');
+const Vote = require('../models/vote');
 
 const getEventByID = (id) => {
   return Event.findById(id)
@@ -62,6 +60,12 @@ const getVotes = () => {
     })
 }
 
+const calculateWinner = ({ eventId }) => {
+  return eventId
+}
+
+
+
 module.exports = {
   getEventByID,
   getEvents,
@@ -70,5 +74,6 @@ module.exports = {
   getRestaurantByID,
   getRestaurants,
   getVoteByID,
-  getVotes
+  getVotes,
+  calculateWinner
 }

@@ -7,7 +7,7 @@ const dotenv = require('dotenv').config();
 // const graphQlSchema = require('./graphql/schema/index');
 // const graphQlResolvers = require('./graphql/resolvers/index');
 
-const schema = require('./graphql/refactor/schema/schema')
+const schema = require('./graphql/schema/schema')
 
 
 const app = express();

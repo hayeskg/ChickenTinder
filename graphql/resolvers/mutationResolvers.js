@@ -1,8 +1,7 @@
-const Event = require('../../../models/refactor/event');
-const Restaurant = require('../../../models/refactor/restaurant');
-const User = require('../../../models/refactor/user');
-const Vote = require('../../../models/refactor/vote');
-const restaurant = require('../../../models/refactor/restaurant');
+const Event = require('../models/event');
+const Restaurant = require('../models/restaurant');
+const User = require('../models/user');
+const Vote = require('../models/vote');
 
 const createEvent = ({ name, date, lat, long, distance }) => {
   let event = new Event({
@@ -54,6 +53,8 @@ const createVote = ({ eventId, restaurantId, userId, positiveVote, negativeVote 
   })
   return vote.save();
 }
+
+
 
 module.exports = {
   createEvent,

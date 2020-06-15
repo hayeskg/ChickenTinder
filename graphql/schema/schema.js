@@ -1,6 +1,6 @@
 const graphql = require('graphql');
 const GraphQLDate = require('graphql-date');
-const { getTripAdvisorRestaurants } = require('../../../utils/getTripAdvisorRestaurants')
+const { getTripAdvisorRestaurants } = require('../../utils/getTripAdvisorRestaurants')
 
 const {
   GraphQLObjectType,
@@ -12,10 +12,10 @@ const {
   GraphQLSchema
 } = graphql;
 
-const Event = require('../../../models/refactor/event');
-const Restaurant = require('../../../models/refactor/restaurant');
-const User = require('../../../models/refactor/user');
-const Vote = require('../../../models/refactor/vote');
+const Event = require('../models/event');
+const Restaurant = require('../models/restaurant');
+const User = require('../models/user');
+const Vote = require('../models/vote');
 
 const {
   getEventByID,
@@ -25,7 +25,8 @@ const {
   getRestaurantByID,
   getRestaurants,
   getVoteByID,
-  getVotes
+  getVotes,
+  calculateWinner
 } = require('../resolvers/queryResolvers')
 
 const {
@@ -192,6 +193,13 @@ const RootQuery = new GraphQLObjectType({
         return getVotes();
       }
     },
+    winner: {
+      type: RestaurantType,
+      args: { eventId: { type: GraphQLID } },
+      resolve(parent, args) {
+        return calculateWinner(args.eventId)
+      }
+    }
   }
 })
 
