@@ -1,0 +1,361 @@
+const graphql = require('graphql');
+const GraphQLDate = require('graphql-date');
+const { getTripAdvisorRestaurants } = require('../../utils/getTripAdvisorRestaurants')
+
+const {
+  GraphQLObjectType,
+  GraphQLID,
+  GraphQLString,
+  GraphQLInt,
+  GraphQLList,
+  GraphQLNonNull,
+  GraphQLSchema
+} = graphql;
+
+const Event = require('../models/event');
+const Restaurant = require('../models/restaurant');
+const User = require('../models/user');
+const Vote = require('../models/vote');
+
+const {
+  getEventByID,
+  getEvents,
+  getUserByID,
+  getUsers,
+  getRestaurantByID,
+  getRestaurants,
+  getVoteByID,
+  getVotes,
+  calculateWinner
+} = require('../resolvers/queryResolvers')
+
+const {
+  createEvent,
+  createUser,
+  createRestaurant,
+  createVote
+} = require('../resolvers/mutationResolvers')
+
+const EventType = new GraphQLObjectType({
+  name: 'Event',
+  fields: () => ({
+    id: { type: GraphQLID },
+    name: { type: GraphQLString },
+    date: { type: GraphQLDate },
+    lat: { type: GraphQLString },
+    long: { type: GraphQLString },
+    distance: { type: GraphQLString },
+    organiser: {
+      type: UserType,
+      resolve(parent, args) {
+        //user id to of parent to return fields 
+        //return _.find(usersdb, {id: parent.id})
+        return User.findById(parent.userId)
+      }
+    },
+    members: {
+      type: new GraphQLList(UserType),
+      resolve(parent, args) {
+        //return _.filter(usersdb,{eventId: parent.id})
+        return User.find({ eventId: parent.id })
+      }
+    },
+    restaurants: {
+      type: new GraphQLList(RestaurantType),
+      resolve(parent, args) {
+        //return _.filter(restaurantsdb,{eventId: parent.id})
+        return Restaurant.find({ eventId: parent.id })
+      }
+    },
+    votes: {
+      type: new GraphQLList(VoteType),
+      resolve(parent, args) {
+        //return _.filter(votesdb,{eventId: parent.id})
+        return Restaurant.find({ eventId: parent.id })
+      }
+    },
+    winner: {
+      type: RestaurantType,
+      resolve(parent, args) {
+        //return _.find(restaurantsdb, {eventId: parent.id})
+        //return Restaurant.find({ eventId: parent.id })
+      }
+    }
+  })
+});
+
+const UserType = new GraphQLObjectType({
+  name: 'User',
+  fields: () => ({
+    id: { type: GraphQLID },
+    name: { type: GraphQLString },
+    email: { type: GraphQLString },
+    password: { type: GraphQLString },
+    city: { type: GraphQLString },
+    eventId: { type: GraphQLID },
+    votes: {
+      type: new GraphQLList(VoteType),
+      resolve(parent, args) {
+        //return _.filter(votesdb,{userId: parent.id})
+        return Vote.find({ userId: parent.id })
+      }
+    },
+  })
+});
+
+const RestaurantType = new GraphQLObjectType({
+  name: 'Restaurant',
+  fields: () => ({
+    id: { type: GraphQLID },
+    eventId: { type: GraphQLID },
+    name: { type: GraphQLString },
+    description: { type: GraphQLString },
+    photo: { type: GraphQLString },
+    price: { type: GraphQLString },
+    ranking: { type: GraphQLString },
+    rating: { type: GraphQLString },
+    phone: { type: GraphQLString },
+    website: { type: GraphQLString },
+    address: { type: GraphQLString },
+    cuisine: {
+      type: new GraphQLList(GraphQLString)
+    },
+    dietRestrictions: {
+      type: new GraphQLList(GraphQLString)
+    }
+  })
+});
+
+const VoteType = new GraphQLObjectType({
+  name: 'Vote',
+  fields: () => ({
+    id: { type: GraphQLID },
+    eventId: { type: GraphQLID },
+    restaurantId: { type: GraphQLID },
+    userId: { type: GraphQLID },
+    positiveVote: { type: GraphQLInt },
+    negativeVote: { type: GraphQLInt }
+  })
+});
+
+const RootQuery = new GraphQLObjectType({
+  name: 'RootQueryType',
+  fields: {
+    event: {
+      type: EventType,
+      args: { id: { type: GraphQLID } },
+      resolve(parent, args) {
+        return getEventByID(args.id);
+      }
+    },
+    events: {
+      type: new GraphQLList(EventType),
+      resolve(parent, args) {
+        return getEvents();
+      }
+    },
+    user: {
+      type: UserType,
+      args: { id: { type: GraphQLID } },
+      resolve(parent, args) {
+        return getUserByID(args.id);
+      }
+    },
+    users: {
+      type: new GraphQLList(UserType),
+      resolve(parent, args) {
+        return getUsers();
+      }
+    },
+    restaurant: {
+      type: RestaurantType,
+      args: { id: { type: GraphQLID } },
+      resolve(parent, args) {
+        return getRestaurantByID(args.id);
+      }
+    },
+    restaurants: {
+      type: new GraphQLList(RestaurantType),
+      resolve(parent, args) {
+        return getRestaurants();
+      }
+    },
+    vote: {
+      type: VoteType,
+      args: { id: { type: GraphQLID } },
+      resolve(parent, args) {
+        return getVoteByID(args.id);
+      }
+    },
+    votes: {
+      type: new GraphQLList(VoteType),
+      resolve(parent, args) {
+        return getVotes();
+      }
+    },
+    winner: {
+      type: RestaurantType,
+      args: { eventId: { type: GraphQLID } },
+      resolve(parent, args) {
+        return calculateWinner(args.eventId)
+      }
+    }
+  }
+})
+
+const Mutation = new GraphQLObjectType({
+  name: 'Mutation',
+  fields: {
+    addEvent: {
+      type: EventType,
+      args: {
+        name: { type: new GraphQLNonNull(GraphQLString) },
+        date: { type: new GraphQLNonNull(GraphQLDate) },
+        lat: { type: new GraphQLNonNull(GraphQLString) },
+        long: { type: new GraphQLNonNull(GraphQLString) },
+        distance: { type: new GraphQLNonNull(GraphQLString) }
+      },
+      resolve(parent, args) {
+        let input = {
+          name: args.name,
+          date: args.date,
+          lat: args.lat,
+          long: args.long,
+          distance: args.distance
+        };
+        let createdEvent = {};
+        return createEvent(input)
+          .then(event => {
+            createdEvent = event;
+            return getTripAdvisorRestaurants({
+              distance: args.distance, lat: args.lat, long: args.long
+            })
+              .then(restaurantsArr => {
+                let createdRestaurants = [];
+                let cuisineArr = [];
+                let dietRestArr = [];
+                return createdRestaurants = Promise.all(restaurantsArr.map(restaurant => {
+                  if (restaurant.photo) {
+                    if (restaurant.cuisine) {
+                      cuisineArr = restaurant.cuisine.map(cuisine => {
+                        return cuisine.name;
+                      })
+                    }
+                    if (restaurant.dietary_restrictions) {
+                      dietRestArr = restaurant.dietary_restrictions.map(diet => {
+                        return diet.name;
+                      })
+                    }
+                    let restaurantInput = {
+                      eventId: createdEvent._id,
+                      name: restaurant.name || 'name not available',
+                      description: restaurant.description || 'description not available',
+                      photo: restaurant.photo.images.original.url || 'photo not available',
+                      price: restaurant.price_level || 'price not available',
+                      ranking: restaurant.ranking || 'ranking not available',
+                      rating: restaurant.rating || 'rating not available',
+                      phone: restaurant.phone || 'phone not available',
+                      website: restaurant.website || 'website not available',
+                      address: restaurant.address || 'address not available',
+                      cuisine: cuisineArr || 'cuisine not available',
+                      dietRestrictions: dietRestArr || 'dietary restructions not available'
+                    }
+                    return createRestaurant(restaurantInput);
+
+                  } else {
+                    return {};
+                  }
+                }))
+              })
+          })
+          .then(() => {
+            return createdEvent;
+          })
+      }
+    },
+    addRestaurant: {
+      type: RestaurantType,
+      args: {
+        eventId: { type: new GraphQLNonNull(GraphQLID) },
+        name: { type: new GraphQLNonNull(GraphQLString) },
+        description: { type: GraphQLString },
+        photo: { type: GraphQLString },
+        price: { type: GraphQLString },
+        ranking: { type: GraphQLString },
+        rating: { type: GraphQLString },
+        phone: { type: GraphQLString },
+        website: { type: GraphQLString },
+        address: { type: GraphQLString },
+        cuisine: {
+          type: new GraphQLList(GraphQLString)
+        },
+        dietRestrictions: {
+          type: new GraphQLList(GraphQLString)
+        }
+      },
+      resolve(parent, args) {
+        let restaurantInput = {
+          eventId: args.eventId,
+          name: args.name,
+          description: args.description,
+          photo: args.photo,
+          price: args.price,
+          ranking: args.ranking,
+          rating: args.rating,
+          phone: args.phone,
+          website: args.website,
+          address: args.address,
+          cuisine: args.cuisine,
+          dietRestrictions: args.dietRestrictions
+        };
+        return createRestaurant(restaurantInput);
+      }
+    },
+    addUser: {
+      type: UserType,
+      args: {
+        eventId: { type: GraphQLID },
+        name: { type: new GraphQLNonNull(GraphQLString) },
+        email: { type: new GraphQLNonNull(GraphQLString) },
+        password: { type: new GraphQLNonNull(GraphQLString) },
+        city: { type: new GraphQLNonNull(GraphQLString) },
+
+      },
+      resolve(parent, args) {
+        let userInput = {
+          eventId: args.eventId,
+          name: args.name,
+          email: args.email,
+          password: args.password,
+          city: args.city,
+        };
+        return createUser(userInput);
+      }
+    },
+    addVote: {
+      type: VoteType,
+      args: {
+        eventId: { type: new GraphQLNonNull(GraphQLID) },
+        restaurantId: { type: new GraphQLNonNull(GraphQLID) },
+        userId: { type: new GraphQLNonNull(GraphQLID) },
+        positiveVote: { type: new GraphQLNonNull(GraphQLInt) },
+        negativeVote: { type: new GraphQLNonNull(GraphQLInt) }
+      },
+      resolve(parent, args) {
+        let voteInput = {
+          eventId: args.eventId,
+          restaurantId: args.restaurantId,
+          userId: args.userId,
+          positiveVote: args.positiveVote,
+          negativeVote: args.negativeVote
+        };
+        return createVote(voteInput);
+      }
+    },
+  }
+})
+
+module.exports = new GraphQLSchema({
+  query: RootQuery,
+  mutation: Mutation
+})
