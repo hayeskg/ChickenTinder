@@ -6,7 +6,7 @@ const sortWinner = (scoreObjArr) => {
       return -1;
     }
   });
-  return sorted[0];
+  return sorted;
 };
 
 module.exports = { sortWinner };
