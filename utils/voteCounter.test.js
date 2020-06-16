@@ -1,4 +1,4 @@
-const { voteWinner } = require('./voteWinner.js');
+const { voteCounter } = require('./voteCounter.js');
 
 describe('Vote Weighting always getting the right winner', () => {
   test('Returns a vote Score for a group of 10 where everyone voted 5 positiveVotes 5 negativeVotes Restaurant Score to be 20', () => {
@@ -9,7 +9,7 @@ describe('Vote Weighting always getting the right winner', () => {
     const restaurantId = 1111;
     const eventId = 2222;
     expect(
-      voteWinner(
+      voteCounter(
         groupSize,
         totalVotes,
         positiveVotes,
@@ -28,7 +28,7 @@ describe('Vote Weighting always getting the right winner', () => {
     const eventId = 2222;
 
     expect(
-      voteWinner(
+      voteCounter(
         groupSize,
         totalVotes,
         positiveVotes,
@@ -46,7 +46,7 @@ describe('Vote Weighting always getting the right winner', () => {
     const restaurantId = 1111;
     const eventId = 2222;
     expect(
-      voteWinner(
+      voteCounter(
         groupSize,
         totalVotes,
         positiveVotes,
@@ -64,7 +64,7 @@ describe('Vote Weighting always getting the right winner', () => {
     const restaurantId = 1111;
     const eventId = 2222;
     expect(
-      voteWinner(
+      voteCounter(
         groupSize,
         totalVotes,
         positiveVotes,
@@ -82,7 +82,7 @@ describe('Vote Weighting always getting the right winner', () => {
     const restaurantId = 1111;
     const eventId = 2222;
     expect(
-      voteWinner(
+      voteCounter(
         groupSize,
         totalVotes,
         positiveVotes,
@@ -100,7 +100,7 @@ describe('Vote Weighting always getting the right winner', () => {
     const restaurantId = 1111;
     const eventId = 2222;
     expect(
-      voteWinner(
+      voteCounter(
         groupSize,
         totalVotes,
         positiveVotes,
@@ -118,7 +118,7 @@ describe('Vote Weighting always getting the right winner', () => {
     const restaurantId = 1111;
     const eventId = 2222;
     expect(
-      voteWinner(
+      voteCounter(
         groupSize,
         totalVotes,
         positiveVotes,
@@ -136,7 +136,7 @@ describe('Vote Weighting always getting the right winner', () => {
     const restaurantId = 1111;
     const eventId = 2222;
     expect(
-      voteWinner(
+      voteCounter(
         groupSize,
         totalVotes,
         positiveVotes,
@@ -154,7 +154,7 @@ describe('Vote Weighting always getting the right winner', () => {
     const restaurantId = 1111;
     const eventId = 2222;
     expect(
-      voteWinner(
+      voteCounter(
         groupSize,
         totalVotes,
         positiveVotes,
@@ -172,7 +172,7 @@ describe('Vote Weighting always getting the right winner', () => {
     const restaurantId = 1111;
     const eventId = 2222;
     expect(
-      voteWinner(
+      voteCounter(
         groupSize,
         totalVotes,
         positiveVotes,
@@ -190,7 +190,7 @@ describe('Vote Weighting always getting the right winner', () => {
     const restaurantId = 1111;
     const eventId = 2222;
     expect(
-      voteWinner(
+      voteCounter(
         groupSize,
         totalVotes,
         positiveVotes,
@@ -208,7 +208,7 @@ describe('Vote Weighting always getting the right winner', () => {
     const restaurantId = 1111;
     const eventId = 2222;
     expect(
-      voteWinner(
+      voteCounter(
         groupSize,
         totalVotes,
         positiveVotes,
@@ -226,7 +226,7 @@ describe('Vote Weighting always getting the right winner', () => {
     const restaurantId = 1111;
     const eventId = 2222;
     expect(
-      voteWinner(
+      voteCounter(
         groupSize,
         totalVotes,
         positiveVotes,
@@ -244,7 +244,7 @@ describe('Vote Weighting always getting the right winner', () => {
     const restaurantId = 1111;
     const eventId = 2222;
     expect(
-      voteWinner(
+      voteCounter(
         groupSize,
         totalVotes,
         positiveVotes,
@@ -262,7 +262,7 @@ describe('Vote Weighting always getting the right winner', () => {
     const restaurantId = 1111;
     const eventId = 2222;
     expect(
-      voteWinner(
+      voteCounter(
         groupSize,
         totalVotes,
         positiveVotes,
@@ -280,7 +280,7 @@ describe('Vote Weighting always getting the right winner', () => {
     const restaurantId = 1111;
     const eventId = 2222;
     expect(
-      voteWinner(
+      voteCounter(
         groupSize,
         totalVotes,
         positiveVotes,
@@ -298,7 +298,7 @@ describe('Vote Weighting always getting the right winner', () => {
     const restaurantId = 1111;
     const eventId = 2222;
     expect(
-      voteWinner(
+      voteCounter(
         groupSize,
         totalVotes,
         positiveVotes,
