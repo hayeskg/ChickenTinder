@@ -4,7 +4,7 @@ const User = require('../models/user');
 const Vote = require('../models/vote');
 
 const { getVotesByRestaurant } = require('../../utils/getVotesByRestaurant');
-const { voteWinner } = require('../../utils/voteWinner');
+const { voteCounter } = require('../../utils/voteCounter');
 const { sortWinner } = require('../../utils/sortWinner');
 
 const getEventByID = (id) => {
@@ -65,7 +65,7 @@ const calculateWinner = (eventId) => {
         let { totalPos, totalNeg, eventId, restaurantId } = vote;
         let totalVotes = totalPos + totalNeg;
         let scoreObj = {};
-        scoreObj = voteWinner(
+        scoreObj = voteCounter(
           groupSize,
           totalVotes,
           totalPos,
@@ -76,7 +76,6 @@ const calculateWinner = (eventId) => {
         scoresArr.push(scoreObj);
       });
       let winningVote = sortWinner(scoresArr);
-      console.log(winningVote);
       return getRestaurantByID(winningVote[0].restaurantId).then((winner) => {
         return winner;
       });
