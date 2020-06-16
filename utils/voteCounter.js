@@ -1,5 +1,4 @@
-const voteWinner = (
-  // should be called scoreCollater
+const voteCounter = (
   groupSize,
   totalVotes,
   positiveVotes,
@@ -14,4 +13,4 @@ const voteWinner = (
   return scoreObj;
 };
 
-module.exports = { voteWinner }; // should be called scoreCollater
+module.exports = { voteCounter };

@@ -7,7 +7,7 @@ const getVotesByRestaurant = (votesArr) => {
     let tempNeg = 0;
     let flag = false;
     for (let i = 0; i < outArr.length; i++) {
-      if (outArr[i].restaurantRef === vote.restaurantRef) {
+      if (outArr[i].restaurantId === vote.restaurantId) {
         if (vote.positiveVote > 0) {
           outArr[i].totalPos++;
         } else if (vote.negativeVote > 0) {
@@ -18,16 +18,16 @@ const getVotesByRestaurant = (votesArr) => {
 
     }
     if (flag === false) {
-      tempRestRef = vote.restaurantRef;
-      tempEventRef = vote.eventRef;
+      tempRestRef = vote.restaurantId;
+      tempEventRef = vote.eventId;
       if (vote.positiveVote > 0) {
         tempPos++;
       } else if (vote.negativeVote > 0) {
         tempNeg++;
       }
       let totObj = {
-        restaurantRef: tempRestRef,
-        eventRef: tempEventRef,
+        restaurantId: tempRestRef,
+        eventId: tempEventRef,
         totalPos: tempPos,
         totalNeg: tempNeg,
       }
