@@ -88,11 +88,19 @@ const UserType = new GraphQLObjectType({
   name: 'User',
   fields: () => ({
     id: { type: GraphQLID },
-    name: { type: GraphQLString },
+    uid: { type: GraphQLString },
+    username: { type: GraphQLString },
     email: { type: GraphQLString },
-    password: { type: GraphQLString },
-    city: { type: GraphQLString },
-    eventId: { type: GraphQLID },
+    photo: { type: GraphQLString },
+    eventIds: {
+      type: new GraphQLList(GraphQLID)
+    },
+    friendsList: {
+      type: new GraphQLList(GraphQLID),
+      // resolve(parent, args) {
+      //   return User.find({ friendsList: parent.id })
+      // }
+    },
     votes: {
       type: new GraphQLList(VoteType),
       resolve(parent, args) {
@@ -314,20 +322,19 @@ const Mutation = new GraphQLObjectType({
     addUser: {
       type: UserType,
       args: {
-        eventId: { type: GraphQLID },
-        name: { type: new GraphQLNonNull(GraphQLString) },
+        uid: {
+          type: new GraphQLNonNull(GraphQLString)
+        },
+        username: { type: GraphQLString },
         email: { type: new GraphQLNonNull(GraphQLString) },
-        password: { type: new GraphQLNonNull(GraphQLString) },
-        city: { type: new GraphQLNonNull(GraphQLString) },
-
+        photo: { type: GraphQLString }
       },
       resolve(parent, args) {
         let userInput = {
-          eventId: args.eventId,
-          name: args.name,
+          uid: args.uid,
+          username: args.username,
           email: args.email,
-          password: args.password,
-          city: args.city,
+          photo: args.photo,
         };
         return createUser(userInput);
       }

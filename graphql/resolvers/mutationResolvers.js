@@ -3,6 +3,8 @@ const Restaurant = require('../models/restaurant');
 const User = require('../models/user');
 const Vote = require('../models/vote');
 
+const { listAllUsers } = require("../../authentication/listAllUsers");
+
 const createEvent = ({ name, date, lat, long, distance }) => {
   let event = new Event({
     name,
@@ -14,14 +16,14 @@ const createEvent = ({ name, date, lat, long, distance }) => {
   return event.save();
 }
 
-const createUser = ({ eventId, name, email, password, city }) => {
+const createUser = ({ uid, username, email, photo }) => {
   let user = new User({
-    eventId,
-    name,
+    uid,
+    username,
     email,
-    password,
-    city
+    photo
   });
+
   return user.save();
 }
 
