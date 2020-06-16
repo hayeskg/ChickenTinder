@@ -249,12 +249,13 @@ const Mutation = new GraphQLObjectType({
               lat: args.lat,
               long: args.long,
             }).then((restaurantsArr) => {
+              let restCounter = 0;
               let createdRestaurants = [];
               let cuisineArr = [];
               let dietRestArr = [];
               return (createdRestaurants = Promise.all(
                 restaurantsArr.map((restaurant) => {
-                  if (restaurant.photo) {
+                  if (restaurant.photo && restCounter < 10) {
                     if (restaurant.cuisine) {
                       cuisineArr = restaurant.cuisine.map((cuisine) => {
                         return cuisine.name;
@@ -285,6 +286,7 @@ const Mutation = new GraphQLObjectType({
                       dietRestrictions:
                         dietRestArr || 'dietary restructions not available',
                     };
+                    restCounter++
                     return createRestaurant(restaurantInput);
                   } else {
                     return {};
