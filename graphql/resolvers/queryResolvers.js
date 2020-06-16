@@ -79,8 +79,11 @@ const calculateWinner = (eventId) => {
       let winningVote = sortWinner(scoresArr);
       return getRestaurantByID(winningVote[0].restaurantId).then((winner) => {
         winnerRestaurant = winner;
-        return winnerRestaurant;
-      });
+        return Event.findByIdAndUpdate({ _id: winnerRestaurant.eventId }, { winner: winnerRestaurant._id })
+      })
+        .then(() => {
+          return winnerRestaurant;
+        })
     });
   });
 };
