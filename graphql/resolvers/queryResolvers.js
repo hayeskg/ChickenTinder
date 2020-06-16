@@ -74,10 +74,10 @@ const calculateWinner = (eventId) => {
           eventId
         );
         scoresArr.push(scoreObj);
-        console.log(scoresArr);
       });
       let winningVote = sortWinner(scoresArr);
-      return getRestaurantByID(winningVote[1].restaurantId).then((winner) => {
+      console.log(winningVote);
+      return getRestaurantByID(winningVote[0].restaurantId).then((winner) => {
         return winner;
       });
     });
