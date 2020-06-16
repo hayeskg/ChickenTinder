@@ -43,7 +43,8 @@ const EventType = new GraphQLObjectType({
   fields: () => ({
     id: { type: GraphQLID },
     name: { type: GraphQLString },
-    date: { type: GraphQLDate },
+    endDate: { type: GraphQLDate },
+    voteDate: { type: GraphQLDate },
     lat: { type: GraphQLString },
     long: { type: GraphQLString },
     distance: { type: GraphQLString },
@@ -52,14 +53,14 @@ const EventType = new GraphQLObjectType({
       resolve(parent, args) {
         //user id to of parent to return fields
         //return _.find(usersdb, {id: parent.id})
-        return User.findById(parent.userId);
+        return User.findById(parent.organiser);
       },
     },
-    members: {
+    guests: {
       type: new GraphQLList(UserType),
       resolve(parent, args) {
         //return _.filter(usersdb,{eventId: parent.id})
-        return User.find({ eventId: parent.id });
+        return User.find({ eventIds: parent.id });
       },
     },
     restaurants: {
@@ -73,14 +74,14 @@ const EventType = new GraphQLObjectType({
       type: new GraphQLList(VoteType),
       resolve(parent, args) {
         //return _.filter(votesdb,{eventId: parent.id})
-        return Restaurant.find({ eventId: parent.id });
+        return Vote.find({ eventId: parent.id });
       },
     },
     winner: {
       type: RestaurantType,
       resolve(parent, args) {
         //return _.find(restaurantsdb, {eventId: parent.id})
-        //return Restaurant.find({ eventId: parent.id })
+        return calculateWinner(parent.id);
       },
     },
   }),
@@ -220,18 +221,24 @@ const Mutation = new GraphQLObjectType({
       type: EventType,
       args: {
         name: { type: new GraphQLNonNull(GraphQLString) },
-        date: { type: new GraphQLNonNull(GraphQLDate) },
+        endDate: { type: new GraphQLNonNull(GraphQLDate) },
+        voteDate: { type: new GraphQLNonNull(GraphQLDate) },
         lat: { type: new GraphQLNonNull(GraphQLString) },
         long: { type: new GraphQLNonNull(GraphQLString) },
         distance: { type: new GraphQLNonNull(GraphQLString) },
+        organiser: { type: GraphQLID },
+        guests: { type: new GraphQLList(GraphQLID) },
       },
       resolve(parent, args) {
         let input = {
           name: args.name,
-          date: args.date,
+          endDate: args.endDate,
+          voteDate: args.vateDate,
           lat: args.lat,
           long: args.long,
           distance: args.distance,
+          organiser: args.organiser,
+          guests: args.guests
         };
         let createdEvent = {};
         return createEvent(input)
@@ -287,8 +294,8 @@ const Mutation = new GraphQLObjectType({
             });
           })
           .then(() => {
-            return createdEvent;
-          });
+            return createdEvent
+          })
       },
     },
     addRestaurant: {
