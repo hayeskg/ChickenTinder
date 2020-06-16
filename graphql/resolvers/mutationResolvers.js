@@ -14,13 +14,13 @@ const createEvent = ({ name, date, lat, long, distance }) => {
   return event.save();
 }
 
-const createUser = ({ eventId, name, email, password, city }) => {
+const createUser = ({ uid, username, email, photo }) => {
   let user = new User({
-    eventId,
-    name,
+    uid,
+    username,
     email,
-    password,
-    city
+    photo,
+
   });
   return user.save();
 }
