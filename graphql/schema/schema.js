@@ -28,7 +28,7 @@ const {
   getRestaurants,
   getVoteByID,
   getVotes,
-  calculateWinner,
+
 } = require('../resolvers/queryResolvers');
 
 const {
@@ -36,6 +36,9 @@ const {
   createUser,
   createRestaurant,
   createVote,
+  calculateWinner,
+  populateFriendsList
+
 } = require('../resolvers/mutationResolvers');
 
 const EventType = new GraphQLObjectType({
@@ -77,10 +80,12 @@ const EventType = new GraphQLObjectType({
         return Vote.find({ eventId: parent.id });
       },
     },
+    //usersVoted
     winner: {
       type: RestaurantType,
       resolve(parent, args) {
         //return _.find(restaurantsdb, {eventId: parent.id})
+        //this will get calculated when voting is finished.
         return calculateWinner(parent.id);
       },
     },
@@ -203,14 +208,7 @@ const RootQuery = new GraphQLObjectType({
       resolve(parent, args) {
         return getVotes();
       },
-    },
-    winner: {
-      type: RestaurantType,
-      args: { eventId: { type: GraphQLID } },
-      resolve(parent, args) {
-        return calculateWinner(args.eventId);
-      },
-    },
+    }
   },
 });
 
@@ -375,6 +373,24 @@ const Mutation = new GraphQLObjectType({
         };
         return createVote(voteInput);
       },
+    },
+    getWinner: {
+      type: RestaurantType,
+      args: {
+        eventId: { type: new GraphQLNonNull(GraphQLID) }
+      },
+      resolve(parent, args) {
+        return calculateWinner(args.eventId);
+      },
+    },
+    fillFriendsList: {
+      type: UserType,
+      args: {
+        userId: { type: new GraphQLNonNull(GraphQLID) }
+      },
+      resolve(parent, args) {
+        return populateFriendsList(args.userId);
+      }
     },
   },
 });
