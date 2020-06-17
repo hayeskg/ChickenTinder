@@ -9,6 +9,7 @@ const {
   GraphQLID,
   GraphQLString,
   GraphQLInt,
+  GraphQLBoolean,
   GraphQLList,
   GraphQLNonNull,
   GraphQLSchema,
@@ -29,7 +30,7 @@ const {
   getVoteByID,
   getVotes,
   getUserByUID,
-
+  isVotingFinished
 } = require('../resolvers/queryResolvers');
 
 const {
@@ -38,9 +39,7 @@ const {
   createRestaurant,
   createVote,
   calculateWinner,
-  populateFriendsList,
-  isVotingFinished
-
+  populateFriendsList
 } = require('../resolvers/mutationResolvers');
 
 const EventType = new GraphQLObjectType({
@@ -221,7 +220,7 @@ const RootQuery = new GraphQLObjectType({
       },
     },
     isVotingDone: {
-      type: RestaurantType,
+      type: GraphQLBoolean,
       args: {
         eventId: { type: new GraphQLNonNull(GraphQLID) }
       },

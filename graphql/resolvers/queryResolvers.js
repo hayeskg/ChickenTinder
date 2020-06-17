@@ -60,22 +60,23 @@ const getUserByUID = (uid) => {
 
 
 const isVotingFinished = (eventId) => {
-  //retrieve event, log number of users
   let userNo = 0;
-  getEventByID(eventId).then(event => {
+  let voteNo = 0;
+  return getEventByID(eventId).then(event => {
     userNo = event.guests + 1;
-    console.log(userNo)
   })
-
-  //retrieve votes by eventID, log number
-
-  //compare value
-
-  //if not equal return false
-
-  //if equal, call calculateWinner
-
-  //return winning restaurant
+    .then(() => {
+      return Vote.find({ eventId: eventId }).then(votes => {
+        voteNo = votes.length;
+      })
+    })
+    .then(() => {
+      if (userNo * 10 === voteNo) {
+        return true;
+      } else {
+        return false;
+      }
+    })
 }
 
 
