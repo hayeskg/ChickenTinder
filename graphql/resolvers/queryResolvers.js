@@ -56,6 +56,7 @@ const getVotes = () => {
 };
 
 const calculateWinner = (eventId) => {
+  let winnerRestaurant = { msg: "No votes yet!" }
   return getEventByID(eventId).then((event) => {
     let groupSize = 5; // needs building into the object
     return Vote.find({ eventId: event.id }).then((votes) => {
@@ -77,8 +78,15 @@ const calculateWinner = (eventId) => {
       });
       let winningVote = sortWinner(scoresArr);
       return getRestaurantByID(winningVote[0].restaurantId).then((winner) => {
-        return winner;
-      });
+        winnerRestaurant = winner;
+        return Event.findByIdAndUpdate(
+          { _id: winnerRestaurant.eventId },
+          { winner: winnerRestaurant._id }
+        )
+      })
+        .then(() => {
+          return winnerRestaurant;
+        })
     });
   });
 };

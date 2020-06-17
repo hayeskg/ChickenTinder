@@ -5,13 +5,16 @@ const Vote = require('../models/vote');
 
 const { listAllUsers } = require("../../authentication/listAllUsers");
 
-const createEvent = ({ name, date, lat, long, distance }) => {
+const createEvent = ({ name, endDate, voteDate, lat, long, distance, organiser, guests }) => {
   let event = new Event({
     name,
-    date,
+    endDate,
+    voteDate,
     long,
     lat,
-    distance
+    distance,
+    organiser,
+    guests
   })
   return event.save();
 }
