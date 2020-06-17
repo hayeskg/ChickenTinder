@@ -123,6 +123,8 @@ const populateFriendsList = (userId) => {
   })
 }
 
+
+
 module.exports = {
   createEvent,
   createUser,

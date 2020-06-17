@@ -28,6 +28,7 @@ const {
   getRestaurants,
   getVoteByID,
   getVotes,
+  getUserByUID,
 
 } = require('../resolvers/queryResolvers');
 
@@ -37,7 +38,8 @@ const {
   createRestaurant,
   createVote,
   calculateWinner,
-  populateFriendsList
+  populateFriendsList,
+  isVotingFinished
 
 } = require('../resolvers/mutationResolvers');
 
@@ -208,7 +210,25 @@ const RootQuery = new GraphQLObjectType({
       resolve(parent, args) {
         return getVotes();
       },
-    }
+    },
+    userByUID: {
+      type: UserType,
+      args: {
+        uid: { type: new GraphQLNonNull(GraphQLString) }
+      },
+      resolve(parent, args) {
+        return getUserByUID(args.uid);
+      },
+    },
+    isVotingDone: {
+      type: RestaurantType,
+      args: {
+        eventId: { type: new GraphQLNonNull(GraphQLID) }
+      },
+      resolve(parent, args) {
+        return isVotingFinished(args.eventId);
+      }
+    },
   },
 });
 
@@ -392,6 +412,16 @@ const Mutation = new GraphQLObjectType({
         return populateFriendsList(args.userId);
       }
     },
+    fillFriendsList: {
+      type: UserType,
+      args: {
+        userId: { type: new GraphQLNonNull(GraphQLID) }
+      },
+      resolve(parent, args) {
+        return populateFriendsList(args.userId);
+      }
+    },
+
   },
 });
 

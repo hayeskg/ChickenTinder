@@ -51,6 +51,32 @@ const getVotes = () => {
   });
 };
 
+const getUserByUID = (uid) => {
+  return User.find({ uid: uid }).then((user) => {
+    console.log(user);
+    return user[0];
+  });
+};
+
+
+const isVotingFinished = (eventId) => {
+  //retrieve event, log number of users
+  let userNo = 0;
+  getEventByID(eventId).then(event => {
+    userNo = event.guests + 1;
+    console.log(userNo)
+  })
+
+  //retrieve votes by eventID, log number
+
+  //compare value
+
+  //if not equal return false
+
+  //if equal, call calculateWinner
+
+  //return winning restaurant
+}
 
 
 module.exports = {
@@ -61,5 +87,7 @@ module.exports = {
   getRestaurantByID,
   getRestaurants,
   getVoteByID,
-  getVotes
+  getVotes,
+  getUserByUID,
+  isVotingFinished
 };
