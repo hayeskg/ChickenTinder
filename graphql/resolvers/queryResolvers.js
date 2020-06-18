@@ -62,7 +62,7 @@ const isVotingFinished = (eventId) => {
   let userNo = 0;
   let voteNo = 0;
   return getEventByID(eventId).then(event => {
-    userNo = event.guests + 1;
+    userNo = event.guests.length + 1;
   })
     .then(() => {
       return Vote.find({ eventId: eventId }).then(votes => {
