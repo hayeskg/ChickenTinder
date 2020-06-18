@@ -34,19 +34,19 @@ const createEvent = ({ name, endDate, voteDate, lat, long, distance, organiser, 
         attendeesIDs.push(guest);
       });
       return Promise.all(attendeesIDs.map(userID => {
-        let eventIds = [];
-        return User.findById(userID)
+        let allEventIds = [event._id];
+        User.findById(userID)
           .then(user => {
             if (user.eventIds) {
-              user.eventIds.map(eventID => {
-                eventIds.push(eventID)
+              user.eventIds.map(ID => {
+                allEventIds.push(ID)
               })
             }
           })
           .then(() => {
             return User.findByIdAndUpdate(
               { _id: userID },
-              { eventIds: eventIds }
+              { eventIds: allEventIds }
             )
           })
       }))
