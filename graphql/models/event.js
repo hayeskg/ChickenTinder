@@ -10,7 +10,6 @@ const eventSchema = new Schema({
   distance: String,
   organiser: String,
   guests: [String]
-
 })
 
 module.exports = mongoose.model('Event', eventSchema);
