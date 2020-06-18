@@ -3,7 +3,7 @@ const Restaurant = require('../models/restaurant');
 const User = require('../models/user');
 const Vote = require('../models/vote');
 
-const { listAllUsers } = require("../../authentication/listAllUsers");
+//const { listAllUsers } = require("../../authentication/listAllUsers");
 const { getVotesByRestaurant } = require('../../utils/getVotesByRestaurant');
 const { voteCounter } = require('../../utils/voteCounter');
 const { sortWinner } = require('../../utils/sortWinner');
@@ -73,7 +73,7 @@ const createVote = ({ eventId, restaurantId, userId, positiveVote, negativeVote 
 const calculateWinner = (eventId) => {
   let winnerRestaurant = { msg: "No votes yet!" }
   return getEventByID(eventId).then((event) => {
-    let groupSize = 5; // needs building into the object
+    let groupSize = event.guests.length + 1
     return Vote.find({ eventId: event.id }).then((votes) => {
       let votesByRestaurant = getVotesByRestaurant(votes);
       let scoresArr = [];
