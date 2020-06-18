@@ -167,23 +167,3 @@ describe('TYPES', () => {
     });
   });
 });
-// describe('RESOLVERS', () => {
-//   describe('QUERIES', () => {
-//     describe('User queries', () => {
-//       test('returns an array of user names', () => {
-//         const query = gql`
-//           {
-//             hello
-//             }
-//           }
-//         `;
-
-//         const { data, errors } = tester.mock({
-//           query,
-//         });
-
-//         expect(data.users).toEqual('Dan');
-//       });
-//     });
-//   });
-// });

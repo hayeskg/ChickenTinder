@@ -53,7 +53,6 @@ const getVotes = () => {
 
 const getUserByUID = (uid) => {
   return User.find({ uid: uid }).then((user) => {
-    console.log(user);
     return user[0];
   });
 };

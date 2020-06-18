@@ -3,7 +3,7 @@ const Restaurant = require('../models/restaurant');
 const User = require('../models/user');
 const Vote = require('../models/vote');
 
-const { listAllUsers } = require("../../authentication/listAllUsers");
+//const { listAllUsers } = require("../../authentication/listAllUsers");
 const { getVotesByRestaurant } = require('../../utils/getVotesByRestaurant');
 const { voteCounter } = require('../../utils/voteCounter');
 const { sortWinner } = require('../../utils/sortWinner');
@@ -25,7 +25,36 @@ const createEvent = ({ name, endDate, voteDate, lat, long, distance, organiser, 
     organiser,
     guests
   })
-  return event.save();
+  //update user eventIDs organiser + guests
+  return event.save()
+    .then((event) => {
+      let attendeesIDs = [];
+      attendeesIDs.push(event.organiser);
+      event.guests.map(guest => {
+        attendeesIDs.push(guest);
+      });
+      return Promise.all(attendeesIDs.map(userID => {
+        let eventIds = [];
+        return User.findById(userID)
+          .then(user => {
+            if (user.eventIds) {
+              user.eventIds.map(eventID => {
+                eventIds.push(eventID)
+              })
+            }
+          })
+          .then(() => {
+            return User.findByIdAndUpdate(
+              { _id: userID },
+              { eventIds: eventIds }
+            )
+          })
+      }))
+    })
+    .then(() => {
+      return event;
+    })
+
 }
 
 const createUser = ({ uid, username, email, photo }) => {
@@ -73,7 +102,7 @@ const createVote = ({ eventId, restaurantId, userId, positiveVote, negativeVote 
 const calculateWinner = (eventId) => {
   let winnerRestaurant = { msg: "No votes yet!" }
   return getEventByID(eventId).then((event) => {
-    let groupSize = 5; // needs building into the object
+    let groupSize = event.guests.length + 1
     return Vote.find({ eventId: event.id }).then((votes) => {
       let votesByRestaurant = getVotesByRestaurant(votes);
       let scoresArr = [];
