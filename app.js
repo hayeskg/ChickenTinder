@@ -14,6 +14,8 @@ const app = express();
 
 app.use(cors());
 
+const port = process.env.PORT || 3000;
+
 app.use(
   "/graphql",
   graphQlHttp({
@@ -23,15 +25,21 @@ app.use(
 );
 
 app.use("/", (req, res, send) => {
-  res.send("Chicken Tinder");
+  res.send("Welcome to the Chicken Tinder server - head to the /graphql endpoint to explore our API.");
 });
 
-app.listen(process.env.PORT || 3000, () => {
-  console.log(`App is live on Port ${process.env.PORT}`);
+app.listen(port, () => {
+  console.log(`Chicken Tinder available on port: ${port}`);
 });
 
 mongoose
-  .connect(process.env.MONGODB_URI, { useFindAndModify: false })
+  .connect(process.env.MONGODB_URI,
+    {
+      useFindAndModify: false,
+      useNewUrlParser: true,
+      useUnifiedTopology: true
+    },
+  )
   .catch((err) => {
     console.log(err);
   });
