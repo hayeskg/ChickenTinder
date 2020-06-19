@@ -300,13 +300,13 @@ const Mutation = new GraphQLObjectType({
     updateUsername: {
       type: UserType,
       args: {
-        userId: { type: new GraphQLNonNull(GraphQLID) },
+        uid: { type: new GraphQLNonNull(GraphQLString) },
         username: { type: new GraphQLNonNull(GraphQLString) },
-        profileUrl: { type: GraphQLString }
+        photoUrl: { type: GraphQLString }
 
       },
       resolve(parent, args) {
-        return amendUsername(args.userId, args.username, args.profileUrl);
+        return amendUsername(args.uid, args.username, args.photoUrl);
       }
     },
 
