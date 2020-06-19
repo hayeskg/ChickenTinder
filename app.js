@@ -5,8 +5,6 @@ const cors = require("cors");
 const dotenv = require("dotenv").config();
 const admin = require("firebase-admin");
 
-// const graphQlSchema = require('./graphql/schema/index');
-// const graphQlResolvers = require('./graphql/resolvers/index');
 
 const schema = require("./graphql/schema/schema");
 

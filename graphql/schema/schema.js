@@ -34,7 +34,8 @@ const {
   createRestaurant,
   createVote,
   calculateWinner,
-  populateFriendsList
+  populateFriendsList,
+  amendUsername
 } = require('../resolvers/mutationResolvers');
 
 const { UserType, EventType, RestaurantType, VoteType } = require('./typeDefs');
@@ -296,13 +297,16 @@ const Mutation = new GraphQLObjectType({
         return populateFriendsList(args.userId);
       }
     },
-    fillFriendsList: {
+    updateUsername: {
       type: UserType,
       args: {
-        userId: { type: new GraphQLNonNull(GraphQLID) }
+        userId: { type: new GraphQLNonNull(GraphQLID) },
+        username: { type: new GraphQLNonNull(GraphQLString) },
+        profileUrl: { type: GraphQLString }
+
       },
       resolve(parent, args) {
-        return populateFriendsList(args.userId);
+        return amendUsername(args.userId, args.username, args.profileUrl);
       }
     },
 

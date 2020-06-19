@@ -25,7 +25,6 @@ const createEvent = ({ name, endDate, voteDate, lat, long, distance, organiser, 
     organiser,
     guests
   })
-  //update user eventIDs organiser + guests
   return event.save()
     .then((event) => {
       let attendeesIDs = [];
@@ -152,7 +151,18 @@ const populateFriendsList = (userId) => {
   })
 }
 
-
+const amendUsername = (userId, username, photoUrl) => {
+  return User.findByIdAndUpdate(
+    { _id: userId },
+    {
+      photo: photoUrl,
+      username: username
+    }
+  )
+    .then(() => {
+      return User.findById(userId);
+    })
+}
 
 module.exports = {
   createEvent,
@@ -160,5 +170,6 @@ module.exports = {
   createRestaurant,
   createVote,
   calculateWinner,
-  populateFriendsList
+  populateFriendsList,
+  amendUsername
 }
