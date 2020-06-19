@@ -59,18 +59,19 @@ const getUserByUID = (uid) => {
 
 
 const isVotingFinished = (eventId) => {
-  let userNo = 0;
-  let voteNo = 0;
+  let userNum = 0;
+  let voteNum = 0;
   return getEventByID(eventId).then(event => {
-    userNo = event.guests.length + 1;
+    userNum = event.guests.length + 1;
   })
     .then(() => {
       return Vote.find({ eventId: eventId }).then(votes => {
-        voteNo = votes.length;
+        voteNum = votes.length;
       })
     })
     .then(() => {
-      if (userNo * 10 === voteNo) {
+      let totalExpVotes = userNum * 10;
+      if (voteNum / totalExpVotes >= 0.65) {
         return true;
       } else {
         return false;
