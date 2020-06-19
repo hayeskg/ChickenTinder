@@ -151,16 +151,16 @@ const populateFriendsList = (userId) => {
   })
 }
 
-const amendUsername = (userId, username, photoUrl) => {
-  return User.findByIdAndUpdate(
-    { _id: userId },
+const amendUsername = (uid, username, photoUrl) => {
+  return User.findOneAndUpdate(
+    { uid: uid },
     {
       photo: photoUrl,
       username: username
     }
   )
-    .then(() => {
-      return User.findById(userId);
+    .then((user) => {
+      return User.findById(user._id);
     })
 }
 
