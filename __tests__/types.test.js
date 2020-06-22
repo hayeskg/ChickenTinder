@@ -6,6 +6,11 @@ const {
   GraphQLInt,
 } = require('graphql');
 const schema = require('../graphql/schema/schema');
+const {
+  UserType,
+  RestaurantType,
+  VoteType,
+} = require('../graphql/schema/typeDefs');
 const { User, Event, Restaurant, Vote } = schema._typeMap;
 
 describe('TYPES', () => {
@@ -14,30 +19,33 @@ describe('TYPES', () => {
       let userFields = User.getFields();
       expect(Object.keys(userFields)).toEqual([
         'id',
-        'name',
+        'uid',
+        'username',
         'email',
-        'password',
-        'city',
-        'eventId',
+        'photo',
+        'eventIds',
+        'friendsList',
         'votes',
       ]);
     });
     test('checks each field has the correct type', () => {
       let {
         id,
-        name,
+        uid,
+        username,
         email,
-        password,
-        city,
-        eventId,
+        photo,
+        eventIds,
+        friendsList,
         votes,
       } = User.getFields();
       expect(id.type).toMatchObject(GraphQLID);
-      expect(name.type).toMatchObject(GraphQLString);
+      expect(uid.type).toMatchObject(GraphQLString);
+      expect(username.type).toMatchObject(GraphQLString);
       expect(email.type).toMatchObject(GraphQLString);
-      expect(password.type).toMatchObject(GraphQLString);
-      expect(city.type).toMatchObject(GraphQLString);
-      expect(eventId.type).toMatchObject(GraphQLID);
+      expect(photo.type).toMatchObject(GraphQLString);
+      expect(friendsList.type).toMatchObject(new GraphQLList(UserType));
+      expect(eventIds.type).toMatchObject(new GraphQLList(GraphQLID));
       expect(votes.type).toMatchObject(new GraphQLList(Vote));
     });
   });
@@ -47,12 +55,13 @@ describe('TYPES', () => {
       expect(Object.keys(eventFields)).toEqual([
         'id',
         'name',
-        'date',
+        'endDate',
+        'voteDate',
         'lat',
         'long',
         'distance',
         'organiser',
-        'members',
+        'guests',
         'restaurants',
         'votes',
         'winner',
@@ -62,27 +71,29 @@ describe('TYPES', () => {
       let {
         id,
         name,
-        date,
+        endDate,
+        voteDate,
         lat,
         long,
         distance,
         organiser,
-        members,
+        guests,
         restaurants,
         votes,
         winner,
       } = Event.getFields();
       expect(id.type).toMatchObject(GraphQLID);
       expect(name.type).toMatchObject(GraphQLString);
-      expect(date.type).toMatchObject(GraphQLDate);
+      expect(endDate.type).toMatchObject(GraphQLDate);
+      expect(voteDate.type).toMatchObject(GraphQLDate);
       expect(lat.type).toMatchObject(GraphQLString);
       expect(long.type).toMatchObject(GraphQLString);
       expect(distance.type).toMatchObject(GraphQLString);
-      expect(organiser.type).toMatchObject(User);
-      expect(members.type).toMatchObject(new GraphQLList(User));
-      expect(restaurants.type).toMatchObject(GraphQLList(Restaurant));
-      expect(votes.type).toMatchObject(new GraphQLList(Vote));
-      expect(winner.type).toMatchObject(Restaurant);
+      expect(organiser.type).toMatchObject(UserType);
+      expect(guests.type).toMatchObject(new GraphQLList(UserType));
+      expect(restaurants.type).toMatchObject(new GraphQLList(RestaurantType));
+      expect(votes.type).toMatchObject(new GraphQLList(VoteType));
+      expect(winner.type).toMatchObject(RestaurantType);
     });
   });
   describe('Restaurant', () => {
