@@ -6,38 +6,43 @@ const {
   GraphQLInt,
 } = require('graphql');
 const schema = require('../graphql/schema/schema');
+const { UserType } = require('../graphql/schema/typeDefs');
 const { User, Event, Restaurant, Vote } = schema._typeMap;
 
 describe('TYPES', () => {
   describe('User', () => {
     test('checks UserType has correct fields', () => {
       let userFields = User.getFields();
+      console.log(userFields);
       expect(Object.keys(userFields)).toEqual([
         'id',
-        'name',
+        'uid',
+        'username',
         'email',
-        'password',
-        'city',
-        'eventId',
+        'photo',
+        'eventIds',
+        'friendsList',
         'votes',
       ]);
     });
     test('checks each field has the correct type', () => {
       let {
         id,
-        name,
+        uid,
+        username,
         email,
-        password,
-        city,
-        eventId,
+        photo,
+        eventIds,
+        friendsList,
         votes,
       } = User.getFields();
       expect(id.type).toMatchObject(GraphQLID);
-      expect(name.type).toMatchObject(GraphQLString);
+      expect(uid.type).toMatchObject(GraphQLString);
+      expect(username.type).toMatchObject(GraphQLString);
       expect(email.type).toMatchObject(GraphQLString);
-      expect(password.type).toMatchObject(GraphQLString);
-      expect(city.type).toMatchObject(GraphQLString);
-      expect(eventId.type).toMatchObject(GraphQLID);
+      expect(photo.type).toMatchObject(GraphQLString);
+      expect(friendsList.type).toMatchObject(new GraphQLList(UserType));
+      expect(eventIds.type).toMatchObject(new GraphQLList(GraphQLID));
       expect(votes.type).toMatchObject(new GraphQLList(Vote));
     });
   });
