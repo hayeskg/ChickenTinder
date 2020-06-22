@@ -6,14 +6,17 @@ const {
   GraphQLInt,
 } = require('graphql');
 const schema = require('../graphql/schema/schema');
-const { UserType } = require('../graphql/schema/typeDefs');
+const {
+  UserType,
+  RestaurantType,
+  VoteType,
+} = require('../graphql/schema/typeDefs');
 const { User, Event, Restaurant, Vote } = schema._typeMap;
 
 describe('TYPES', () => {
   describe('User', () => {
     test('checks UserType has correct fields', () => {
       let userFields = User.getFields();
-      console.log(userFields);
       expect(Object.keys(userFields)).toEqual([
         'id',
         'uid',
@@ -52,12 +55,13 @@ describe('TYPES', () => {
       expect(Object.keys(eventFields)).toEqual([
         'id',
         'name',
-        'date',
+        'endDate',
+        'voteDate',
         'lat',
         'long',
         'distance',
         'organiser',
-        'members',
+        'guests',
         'restaurants',
         'votes',
         'winner',
@@ -67,27 +71,29 @@ describe('TYPES', () => {
       let {
         id,
         name,
-        date,
+        endDate,
+        voteDate,
         lat,
         long,
         distance,
         organiser,
-        members,
+        guests,
         restaurants,
         votes,
         winner,
       } = Event.getFields();
       expect(id.type).toMatchObject(GraphQLID);
       expect(name.type).toMatchObject(GraphQLString);
-      expect(date.type).toMatchObject(GraphQLDate);
+      expect(endDate.type).toMatchObject(GraphQLDate);
+      expect(voteDate.type).toMatchObject(GraphQLDate);
       expect(lat.type).toMatchObject(GraphQLString);
       expect(long.type).toMatchObject(GraphQLString);
       expect(distance.type).toMatchObject(GraphQLString);
-      expect(organiser.type).toMatchObject(User);
-      expect(members.type).toMatchObject(new GraphQLList(User));
-      expect(restaurants.type).toMatchObject(GraphQLList(Restaurant));
-      expect(votes.type).toMatchObject(new GraphQLList(Vote));
-      expect(winner.type).toMatchObject(Restaurant);
+      expect(organiser.type).toMatchObject(UserType);
+      expect(guests.type).toMatchObject(new GraphQLList(UserType));
+      expect(restaurants.type).toMatchObject(new GraphQLList(RestaurantType));
+      expect(votes.type).toMatchObject(new GraphQLList(VoteType));
+      expect(winner.type).toMatchObject(RestaurantType);
     });
   });
   describe('Restaurant', () => {
